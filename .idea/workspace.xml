@@ -5,50 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="792ae441-bafb-4c9d-927d-e87ef4db3a43" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/config/SwaggerConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/enums/ActivityLevel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/enums/Gender.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/enums/GoalType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/UserProfile/HealthMetricsResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/HealthCalculatorService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym/src/test/java/com/aigym/BaseIntegrationTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym/src/test/java/com/aigym/controller/AuthControllerTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym/src/test/java/com/aigym/controller/ExerciseControllerTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym_Postman_Collection.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym_Postman_Collection.json.backup" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/add_tests.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/check_order.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/make_dynamic_postman.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/populate_mock_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/common/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/common/exception/GlobalExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/config/AppSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/config/AppSecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/controller/UserProfileController.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/controller/UserProfileController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/BaseEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/BaseEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/Exercise.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/Exercise.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/FoodItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/FoodItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/NutritionLog.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/NutritionLog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/ProgressPhoto.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/ProgressPhoto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/ScheduleDay.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/ScheduleDay.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/ScheduledExercise.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/ScheduledExercise.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/UserProfile.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/UserProfile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WeeklySchedule.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WeeklySchedule.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WorkoutLog.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WorkoutLog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WorkoutPlan.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WorkoutPlan.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WorkoutSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WorkoutSession.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/enums/Category.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/enums/Category.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/UserProfile/UserProfileRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/UserProfile/UserProfileRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/UserProfile/UserProfileResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/UserProfile/UserProfileResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/RateLimitingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/security/RateLimitingService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/UserProfileService.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/UserProfileService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/AuthServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/UserProfileServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/UserProfileServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,37 +31,37 @@
   &quot;associatedIndex&quot;: 0
 }</component>
   <component name="ProjectId" id="3DzMORpSzAnvK1tYja0HbZfjPKy" />
-  <component name="ProjectLevelVcsManager">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;JUnit.ExerciseControllerTest.executor&quot;: &quot;Run&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Spring Boot.AiGymApplication.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/TestProject/AIGym/Backend_AIGym&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.repository.indices&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "JUnit.ExerciseControllerTest.executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Spring Boot.AiGymApplication.executor": "Run",
+    "git-widget-placeholder": "dev2",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/TestProject/AIGym/Backend_AIGym",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\TestProject\AIGym\Backend_AIGym\AIGym\src\main\resources" />
@@ -188,7 +145,7 @@
       <workItem from="1780802240471" duration="1307000" />
       <workItem from="1780805785894" duration="2609000" />
       <workItem from="1780810889098" duration="6029000" />
-      <workItem from="1780913096905" duration="2820000" />
+      <workItem from="1780913096905" duration="2863000" />
     </task>
     <servers />
   </component>
