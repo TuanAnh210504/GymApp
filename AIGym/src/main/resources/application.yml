@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: AIGym
+
+  profiles:
+    active: dev
+
+server:
+  port: 8080
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    operations-sorter: alpha
+    tags-sorter: alpha

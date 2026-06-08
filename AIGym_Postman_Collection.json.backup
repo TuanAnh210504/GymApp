@@ -1,0 +1,2102 @@
+{
+    "info": {
+        "name": "AIGym API",
+        "description": "Auto-generated Postman Collection for AIGym Backend",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Auth",
+            "item": [
+                {
+                    "name": "POST /api/auth/register",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/auth/register",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST /api/auth/verify-email",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/auth/verify-email",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST /api/auth/login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/auth/login",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Save JWT token to environment\", function () {",
+                                    "    if (pm.response.code === 200 && pm.response.text().length > 0) {",
+                                    "        var jsonData = pm.response.json();",
+                                    "        var token = jsonData.token || (jsonData.data && jsonData.data.token) || jsonData.accessToken;",
+                                    "        if (token) {",
+                                    "            pm.environment.set(\"jwt_token\", token);",
+                                    "            console.log(\"Token saved!\");",
+                                    "        }",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST /api/auth/refresh",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/auth/refresh",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Exercise",
+            "item": [
+                {
+                    "name": "POST /api/exercises",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/exercises",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/exercises/:id",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/exercises/:id"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/exercises",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/exercises"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/exercises/category/:category",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/exercises/category/:category"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT /api/exercises/:id",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/exercises/:id",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "DELETE /api/exercises/:id",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/exercises/:id"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "FoodItem",
+            "item": [
+                {
+                    "name": "POST /api/food-items",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/food-items",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/food-items/:id",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/food-items/:id"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/food-items",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/food-items"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT /api/food-items/:id",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/food-items/:id",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "DELETE /api/food-items/:id",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/food-items/:id"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NutritionLog",
+            "item": [
+                {
+                    "name": "POST /api/nutrition-logs",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/nutrition-logs",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/nutrition-logs/:id",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/nutrition-logs/:id"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/nutrition-logs",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/nutrition-logs"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT /api/nutrition-logs/:id",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/nutrition-logs/:id",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "DELETE /api/nutrition-logs/:id",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/nutrition-logs/:id"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "ProgressPhoto",
+            "item": [
+                {
+                    "name": "POST /api/progress-photos",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/progress-photos",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/progress-photos/:id",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/progress-photos/:id"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/progress-photos",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/progress-photos"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT /api/progress-photos/:id",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/progress-photos/:id",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "DELETE /api/progress-photos/:id",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/progress-photos/:id"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "UserProfile",
+            "item": [
+                {
+                    "name": "GET /api/profiles/me",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/profiles/me"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST /api/profiles/me",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/profiles/me",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "WeeklySchedule",
+            "item": [
+                {
+                    "name": "POST /api/schedules",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/schedules",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/schedules/:id",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/schedules/:id"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/schedules/me",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/schedules/me"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/schedules/me/active",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/schedules/me/active"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT /api/schedules/:id",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/schedules/:id",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT /api/schedules/:id/active",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/schedules/:id/active",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "DELETE /api/schedules/:id",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/schedules/:id"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "WorkoutPlan",
+            "item": [
+                {
+                    "name": "POST /api/workout-plans",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/workout-plans",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/workout-plans/:id",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/workout-plans/:id"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/workout-plans/public",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/workout-plans/public"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/workout-plans/me",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/workout-plans/me"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT /api/workout-plans/:id",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/workout-plans/:id",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "DELETE /api/workout-plans/:id",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/workout-plans/:id"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "WorkoutSession",
+            "item": [
+                {
+                    "name": "POST /api/sessions",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/sessions",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/sessions/:id",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/sessions/:id"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/sessions/me",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/sessions/me"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT /api/sessions/:id",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/sessions/:id",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "DELETE /api/sessions/:id",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/sessions/:id"
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Successful request\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 400, 401, 403, 404]); // Include error codes if testing edge cases, but for sunny day 2xx is expected",
+                                    "    // To be strict: ",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is acceptable\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is valid JSON if body is present\", function () {",
+                                    "    if (pm.response.text().length > 0) {",
+                                    "        pm.response.to.be.json;",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8080",
+            "type": "string"
+        },
+        {
+            "key": "jwt_token",
+            "value": "your_token_here",
+            "type": "string"
+        }
+    ]
+}
