@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,4 +29,6 @@ public class WorkoutPlanRequest {
     private Difficulty difficulty;
 
     private boolean isPublic = false;
+
+    private List<WorkoutPlanDayRequest> planDays;
 }

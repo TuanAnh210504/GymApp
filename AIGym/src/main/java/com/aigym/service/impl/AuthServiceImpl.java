@@ -46,7 +46,22 @@ public class AuthServiceImpl implements AuthService {
     public void register(RegisterRequestDto request) {
         // Kiểm tra email đã tồn tại chưa
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already registered: " + request.getEmail());
+            User existingUser = userRepository.findByEmail(request.getEmail()).orElse(null);
+            if (existingUser != null && existingUser.isActive()) {
+                // Tài khoản đã tồn tại VÀ đã xác thực → không cho đăng ký lại
+                throw new BadRequestException("Email này đã được đăng ký và xác thực. Vui lòng đăng nhập.");
+            } else if (existingUser != null && !existingUser.isActive()) {
+                // Tài khoản tồn tại nhưng CHƯA xác thực → cập nhật thông tin và gửi lại OTP
+                String otpCode = generateOtp();
+                existingUser.setFullName(request.getFullName());
+                existingUser.setPassword(passwordEncoder.encode(request.getPassword()));
+                existingUser.setVerificationCode(otpCode);
+                existingUser.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(5));
+                existingUser.setFailedOtpAttempts(0);
+                userRepository.save(existingUser);
+                emailService.sendVerificationEmail(existingUser.getEmail(), otpCode);
+                return;
+            }
         }
 
         // Tạo người dùng mới

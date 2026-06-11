@@ -13,4 +13,11 @@ public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
     List<Exercise> findByPrimaryCategory(Category category);
 
     boolean existsByName(String name);
+
+    @org.springframework.data.jpa.repository.Query(value = "SELECT * FROM exercises WHERE is_deleted = true", nativeQuery = true)
+    List<Exercise> findAllDeletedNative();
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query(value = "UPDATE exercises SET is_deleted = false WHERE id = :id", nativeQuery = true)
+    int restoreNative(@org.springframework.data.repository.query.Param("id") Long id);
 }

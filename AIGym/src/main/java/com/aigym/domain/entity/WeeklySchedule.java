@@ -14,9 +14,6 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
-
 @Entity
 @Table(name = "weekly_schedules")
 @Getter
@@ -26,8 +23,6 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@SQLDelete(sql = "UPDATE weekly_schedules SET is_deleted = true WHERE id=?")
-@SQLRestriction("is_deleted = false")
 public class WeeklySchedule extends BaseEntity {
 
     // Chủ sở hữu lịch tập

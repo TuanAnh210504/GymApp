@@ -113,6 +113,22 @@ public class ExerciseServiceImpl implements ExerciseService {
         exerciseRepository.delete(exercise);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<ExerciseResponse> getDeletedExercises() {
+        List<Exercise> exercises = exerciseRepository.findAllDeletedNative();
+        return exercises.stream().map(this::toResponse).toList();
+    }
+
+    @Override
+    @Transactional
+    public void restoreExercise(Long id) {
+        int updated = exerciseRepository.restoreNative(id);
+        if (updated == 0) {
+            throw new NotFoundException("Không tìm thấy bài tập đã xóa với ID: " + id);
+        }
+    }
+
     // ======================== PRIVATE HELPER METHODS ========================
 
     /**

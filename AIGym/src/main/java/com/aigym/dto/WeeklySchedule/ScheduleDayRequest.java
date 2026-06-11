@@ -22,7 +22,7 @@ public class ScheduleDayRequest {
     @NotBlank(message = "Tên nhãn ngày (label) không được để trống")
     private String label;
 
-    private boolean isRestDay = false;
+    private boolean restDay = false;
 
     // Các bài tập lồng bên trong ngày này
     @Valid

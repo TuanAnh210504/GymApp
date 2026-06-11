@@ -5,7 +5,40 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="792ae441-bafb-4c9d-927d-e87ef4db3a43" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/controller/UserController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WorkoutPlanDay.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WorkoutPlanExercise.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WorkoutPlan/WorkoutPlanDayRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WorkoutPlan/WorkoutPlanDayResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WorkoutPlan/WorkoutPlanExerciseRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WorkoutPlan/WorkoutPlanExerciseResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/user/UpdateUserRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/repository/WorkoutPlanDayRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/UserService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/UserServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AIGym/src/test/java/com/aigym/JacksonTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/common/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/common/exception/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/controller/ExerciseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/controller/ExerciseController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/controller/WorkoutPlanController.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/controller/WorkoutPlanController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/ScheduleDay.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/ScheduleDay.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/ScheduledExercise.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/ScheduledExercise.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WeeklySchedule.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WeeklySchedule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WorkoutPlan.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WorkoutPlan.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WeeklySchedule/ScheduleDayRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WeeklySchedule/ScheduleDayRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WeeklySchedule/WeeklyScheduleRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WeeklySchedule/WeeklyScheduleRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WorkoutPlan/WorkoutPlanRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WorkoutPlan/WorkoutPlanRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WorkoutPlan/WorkoutPlanResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WorkoutPlan/WorkoutPlanResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/repository/ExerciseRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/repository/ExerciseRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/repository/ScheduleDayRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/repository/ScheduleDayRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/repository/WorkoutPlanRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/repository/WorkoutPlanRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/ExerciseService.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/ExerciseService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/WorkoutPlanService.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/WorkoutPlanService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/AuthServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/ExerciseServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/ExerciseServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/WeeklyScheduleServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/WeeklyScheduleServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/WorkoutPlanServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/WorkoutPlanServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,30 +71,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "JUnit.ExerciseControllerTest.executor": "Run",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Spring Boot.AiGymApplication.executor": "Run",
-    "git-widget-placeholder": "dev2",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/TestProject/AIGym/Backend_AIGym",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;JUnit.ExerciseControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Spring Boot.AiGymApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/TestProject/AIGym/Backend_AIGym&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\TestProject\AIGym\Backend_AIGym\AIGym\src\main\resources" />
@@ -146,6 +179,8 @@
       <workItem from="1780805785894" duration="2609000" />
       <workItem from="1780810889098" duration="6029000" />
       <workItem from="1780913096905" duration="2863000" />
+      <workItem from="1781004646564" duration="7927000" />
+      <workItem from="1781093330483" duration="3970000" />
     </task>
     <servers />
   </component>
@@ -154,5 +189,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/.." />
+    </ignored-roots>
   </component>
 </project>

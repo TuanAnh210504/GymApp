@@ -57,8 +57,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(
             org.springframework.http.converter.HttpMessageNotReadableException ex) {
+        log.error("HttpMessageNotReadableException: ", ex);
         ApiResponse<Void> response = ApiResponse
-                .error("Dữ liệu đầu vào không hợp lệ hoặc sai định dạng (VD: sai giá trị Enum).");
+                .error("Dữ liệu đầu vào không hợp lệ hoặc sai định dạng.");
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 

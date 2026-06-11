@@ -11,6 +11,9 @@ import com.aigym.domain.enums.Difficulty;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -46,4 +49,8 @@ public class WorkoutPlan extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_user_id")
     private User creator;
+
+    @OneToMany(mappedBy = "workoutPlan", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<WorkoutPlanDay> planDays = new ArrayList<>();
 }

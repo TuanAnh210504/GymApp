@@ -19,9 +19,12 @@ public class WeeklyScheduleRequest {
 
     private String description;
 
-    private boolean isActive = false;
+    private boolean active = false;
 
     // Các ngày tập lồng bên trong lịch tuần này
     @Valid
     private List<ScheduleDayRequest> scheduleDays = new ArrayList<>();
+
+    // Dùng để sao chép từ một giáo án mẫu
+    private Long workoutPlanId;
 }

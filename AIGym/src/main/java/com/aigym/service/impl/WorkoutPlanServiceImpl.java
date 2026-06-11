@@ -11,7 +11,17 @@ import com.aigym.mapper.GenericMapper;
 import com.aigym.repository.WorkoutPlanRepository;
 import com.aigym.security.CurrentUserService;
 import com.aigym.service.WorkoutPlanService;
+import com.aigym.domain.entity.WorkoutPlanDay;
+import com.aigym.domain.entity.WorkoutPlanExercise;
+import com.aigym.domain.entity.Exercise;
+import com.aigym.domain.enums.Role;
+import com.aigym.dto.WorkoutPlan.WorkoutPlanDayResponse;
+import com.aigym.dto.WorkoutPlan.WorkoutPlanExerciseResponse;
+import com.aigym.dto.Exercise.ExerciseResponse;
+import com.aigym.repository.WorkoutPlanDayRepository;
+import com.aigym.repository.ExerciseRepository;
 import lombok.RequiredArgsConstructor;
+import java.util.ArrayList;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +32,8 @@ import java.util.List;
 public class WorkoutPlanServiceImpl implements WorkoutPlanService {
 
     private final WorkoutPlanRepository workoutPlanRepository;
+    private final WorkoutPlanDayRepository workoutPlanDayRepository;
+    private final ExerciseRepository exerciseRepository;
     private final CurrentUserService currentUserService;
     private final GenericMapper genericMapper;
 
@@ -35,6 +47,8 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
         User currentUser = currentUserService.getCurrentUser();
         WorkoutPlan plan = genericMapper.mapToEntity(request, WorkoutPlan.class);
         plan.setCreator(currentUser);
+
+        buildPlanHierarchy(plan, request);
 
         WorkoutPlan saved = workoutPlanRepository.save(plan);
         return toResponse(saved);
@@ -69,9 +83,12 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
         WorkoutPlan plan = workoutPlanRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy giáo án với ID: " + id));
 
-        // Kiểm tra quyền sở hữu (chỉ người tạo mới được sửa)
+        // Kiểm tra quyền sở hữu (chỉ người tạo mới được sửa, hoặc là ADMIN)
         User currentUser = currentUserService.getCurrentUser();
-        if (!plan.getCreator().getId().equals(currentUser.getId())) {
+        boolean isAdmin = currentUser.getRole() == Role.ADMIN;
+        boolean isCreator = plan.getCreator() != null && plan.getCreator().getId().equals(currentUser.getId());
+
+        if (!isAdmin && !isCreator) {
             throw new BadRequestException("Bạn không có quyền sửa giáo án này");
         }
 
@@ -84,6 +101,13 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
         plan.setDurationWeeks(request.getDurationWeeks());
         plan.setDifficulty(request.getDifficulty());
         plan.setPublic(request.isPublic());
+
+        workoutPlanDayRepository.deleteExercisesByPlanIdNative(id);
+        workoutPlanDayRepository.deleteDaysByPlanIdNative(id);
+        
+        plan.getPlanDays().clear();
+
+        buildPlanHierarchy(plan, request);
 
         WorkoutPlan updated = workoutPlanRepository.save(plan);
         return toResponse(updated);
@@ -103,7 +127,77 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
         workoutPlanRepository.delete(plan);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<WorkoutPlanResponse> getDeletedWorkoutPlans() {
+        List<WorkoutPlan> plans = workoutPlanRepository.findAllDeletedNative();
+        return plans.stream().map(this::toResponse).toList();
+    }
+
+    @Override
+    @Transactional
+    public void restoreWorkoutPlan(Long id) {
+        int updated = workoutPlanRepository.restoreNative(id);
+        if (updated == 0) {
+            throw new NotFoundException("Không tìm thấy giáo án đã xóa với ID: " + id);
+        }
+    }
+
     private WorkoutPlanResponse toResponse(WorkoutPlan plan) {
-        return genericMapper.mapToDto(plan, WorkoutPlanResponse.class);
+        WorkoutPlanResponse response = genericMapper.mapToDto(plan, WorkoutPlanResponse.class);
+
+        List<WorkoutPlanDayResponse> dayResponses = new ArrayList<>();
+        if (plan.getPlanDays() != null) {
+            plan.getPlanDays().forEach(day -> {
+                WorkoutPlanDayResponse dayResp = genericMapper.mapToDto(day, WorkoutPlanDayResponse.class);
+
+                List<WorkoutPlanExerciseResponse> exResponses = new ArrayList<>();
+                if (day.getPlanExercises() != null) {
+                    day.getPlanExercises().forEach(ex -> {
+                        WorkoutPlanExerciseResponse exResp = genericMapper.mapToDto(ex, WorkoutPlanExerciseResponse.class);
+                        if (ex.getExercise() != null) {
+                            exResp.setExercise(genericMapper.mapToDto(ex.getExercise(), ExerciseResponse.class));
+                        }
+                        exResponses.add(exResp);
+                    });
+                }
+                dayResp.setPlanExercises(exResponses);
+                dayResponses.add(dayResp);
+            });
+        }
+        response.setPlanDays(dayResponses);
+        return response;
+    }
+
+    private void buildPlanHierarchy(WorkoutPlan plan, WorkoutPlanRequest request) {
+        if (request.getPlanDays() != null) {
+            request.getPlanDays().forEach(dayReq -> {
+                WorkoutPlanDay day = new WorkoutPlanDay();
+                day.setWorkoutPlan(plan);
+                day.setDayOfWeek(dayReq.getDayOfWeek());
+                day.setLabel(dayReq.getLabel());
+                day.setRestDay(dayReq.isRestDay());
+
+                if (dayReq.getPlanExercises() != null) {
+                    dayReq.getPlanExercises().forEach(exReq -> {
+                        Exercise exercise = exerciseRepository.findById(exReq.getExerciseId())
+                                .orElseThrow(() -> new NotFoundException(
+                                        "Không tìm thấy bài tập ID: " + exReq.getExerciseId()));
+
+                        WorkoutPlanExercise planExercise = new WorkoutPlanExercise();
+                        planExercise.setWorkoutPlanDay(day);
+                        planExercise.setExercise(exercise);
+                        planExercise.setTargetSets(exReq.getTargetSets());
+                        planExercise.setTargetReps(exReq.getTargetReps());
+                        planExercise.setTargetWeight(exReq.getTargetWeight());
+                        planExercise.setOrderIndex(exReq.getOrderIndex());
+                        planExercise.setNote(exReq.getNote());
+
+                        day.getPlanExercises().add(planExercise);
+                    });
+                }
+                plan.getPlanDays().add(day);
+            });
+        }
     }
 }

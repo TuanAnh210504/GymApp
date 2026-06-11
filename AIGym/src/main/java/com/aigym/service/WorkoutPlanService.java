@@ -18,4 +18,8 @@ public interface WorkoutPlanService {
     WorkoutPlanResponse updateWorkoutPlan(Long id, WorkoutPlanRequest request);
 
     void deleteWorkoutPlan(Long id);
+
+    List<WorkoutPlanResponse> getDeletedWorkoutPlans();
+
+    void restoreWorkoutPlan(Long id);
 }

@@ -10,8 +10,10 @@ import com.aigym.dto.WeeklySchedule.WeeklyScheduleRequest;
 import com.aigym.dto.WeeklySchedule.WeeklyScheduleResponse;
 import com.aigym.dto.user.UserResponse;
 import com.aigym.mapper.GenericMapper;
+import com.aigym.repository.ScheduleDayRepository;
 import com.aigym.repository.ExerciseRepository;
 import com.aigym.repository.WeeklyScheduleRepository;
+import com.aigym.repository.WorkoutPlanRepository;
 import com.aigym.security.CurrentUserService;
 import com.aigym.service.WeeklyScheduleService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,9 @@ import java.util.Optional;
 public class WeeklyScheduleServiceImpl implements WeeklyScheduleService {
 
     private final WeeklyScheduleRepository weeklyScheduleRepository;
+    private final ScheduleDayRepository scheduleDayRepository;
     private final ExerciseRepository exerciseRepository;
+    private final WorkoutPlanRepository workoutPlanRepository;
     private final CurrentUserService currentUserService;
     private final GenericMapper genericMapper;
 
@@ -48,8 +52,39 @@ public class WeeklyScheduleServiceImpl implements WeeklyScheduleService {
             deactivateCurrentActiveSchedule(currentUser.getId());
         }
 
-        // 2. Build quan hệ lồng nhau
-        buildScheduleHierarchy(schedule, request);
+        if (request.getWorkoutPlanId() != null) {
+            // Clone từ giáo án mẫu
+            WorkoutPlan plan = workoutPlanRepository.findById(request.getWorkoutPlanId())
+                    .orElseThrow(() -> new NotFoundException("Không tìm thấy giáo án mẫu ID: " + request.getWorkoutPlanId()));
+            
+            if (plan.getPlanDays() != null) {
+                plan.getPlanDays().forEach(planDay -> {
+                    ScheduleDay day = new ScheduleDay();
+                    day.setWeeklySchedule(schedule);
+                    day.setDayOfWeek(planDay.getDayOfWeek());
+                    day.setLabel(planDay.getLabel());
+                    day.setRestDay(planDay.isRestDay());
+
+                    if (planDay.getPlanExercises() != null) {
+                        planDay.getPlanExercises().forEach(planEx -> {
+                            ScheduledExercise ex = new ScheduledExercise();
+                            ex.setScheduleDay(day);
+                            ex.setExercise(planEx.getExercise());
+                            ex.setTargetSets(planEx.getTargetSets());
+                            ex.setTargetReps(planEx.getTargetReps());
+                            ex.setTargetWeight(planEx.getTargetWeight());
+                            ex.setOrderIndex(planEx.getOrderIndex());
+                            ex.setNote(planEx.getNote());
+                            day.getScheduledExercises().add(ex);
+                        });
+                    }
+                    schedule.getScheduleDays().add(day);
+                });
+            }
+        } else {
+            // Build quan hệ lồng nhau từ request thông thường
+            buildScheduleHierarchy(schedule, request);
+        }
 
         // 3. Save (Cascade sẽ lưu toàn bộ days và exercises)
         WeeklySchedule saved = weeklyScheduleRepository.save(schedule);
@@ -87,16 +122,19 @@ public class WeeklyScheduleServiceImpl implements WeeklyScheduleService {
 
         schedule.setName(request.getName());
         schedule.setDescription(request.getDescription());
-        
+
         if (request.isActive() && !schedule.isActive()) {
             deactivateCurrentActiveSchedule(schedule.getUser().getId());
         }
         schedule.setActive(request.isActive());
 
-        // Clear danh sách cũ để Hibernate orphanRemoval tự xoá
+        // Hard-delete old days + exercises via native SQL to avoid soft-delete unique constraint conflict
+        scheduleDayRepository.hardDeleteExercisesByScheduleId(id);
+        scheduleDayRepository.hardDeleteDaysByScheduleId(id);
+        // Evict the stale collection from session so Hibernate doesn't try to soft-delete again
         schedule.getScheduleDays().clear();
-        
-        // Build lại cây quan hệ mới
+
+        // Build new hierarchy
         buildScheduleHierarchy(schedule, request);
 
         WeeklySchedule updated = weeklyScheduleRepository.save(schedule);
@@ -107,13 +145,13 @@ public class WeeklyScheduleServiceImpl implements WeeklyScheduleService {
     @Transactional
     public WeeklyScheduleResponse setActiveSchedule(Long id) {
         WeeklySchedule schedule = getScheduleAndVerifyOwnership(id);
-        
+
         if (!schedule.isActive()) {
             deactivateCurrentActiveSchedule(schedule.getUser().getId());
             schedule.setActive(true);
             weeklyScheduleRepository.save(schedule);
         }
-        
+
         return toResponse(schedule);
     }
 
@@ -144,7 +182,8 @@ public class WeeklyScheduleServiceImpl implements WeeklyScheduleService {
                 if (dayReq.getScheduledExercises() != null) {
                     dayReq.getScheduledExercises().forEach(exReq -> {
                         Exercise exercise = exerciseRepository.findById(exReq.getExerciseId())
-                                .orElseThrow(() -> new NotFoundException("Không tìm thấy bài tập ID: " + exReq.getExerciseId()));
+                                .orElseThrow(() -> new NotFoundException(
+                                        "Không tìm thấy bài tập ID: " + exReq.getExerciseId()));
 
                         ScheduledExercise scheduledExercise = new ScheduledExercise();
                         scheduledExercise.setScheduleDay(day); // Quan hệ 2 chiều
@@ -182,7 +221,7 @@ public class WeeklyScheduleServiceImpl implements WeeklyScheduleService {
         if (schedule.getScheduleDays() != null) {
             schedule.getScheduleDays().forEach(day -> {
                 ScheduleDayResponse dayResp = genericMapper.mapToDto(day, ScheduleDayResponse.class);
-                
+
                 List<ScheduledExerciseResponse> exResponses = new ArrayList<>();
                 if (day.getScheduledExercises() != null) {
                     day.getScheduledExercises().forEach(ex -> {

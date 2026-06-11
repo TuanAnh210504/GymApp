@@ -5,8 +5,8 @@ import com.aigym.dto.user.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -20,4 +20,5 @@ public class WorkoutPlanResponse {
     private boolean isPublic;
     private UserResponse creator;
     private LocalDateTime createdAt;
+    private List<WorkoutPlanDayResponse> planDays;
 }

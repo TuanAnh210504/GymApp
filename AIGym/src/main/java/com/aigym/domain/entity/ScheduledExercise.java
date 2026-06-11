@@ -11,9 +11,6 @@ import com.aigym.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
-
 @Entity
 @Table(name = "scheduled_exercises")
 @Getter
@@ -23,8 +20,6 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@SQLDelete(sql = "UPDATE scheduled_exercises SET is_deleted = true WHERE id=?")
-@SQLRestriction("is_deleted = false")
 public class ScheduledExercise extends BaseEntity {
 
     // Thuộc ngày tập nào trong lịch

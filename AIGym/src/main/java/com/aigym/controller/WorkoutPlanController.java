@@ -59,4 +59,18 @@ public class WorkoutPlanController {
         workoutPlanService.deleteWorkoutPlan(id);
         return ResponseEntity.ok(ApiResponse.success("Xoá giáo án thành công", null));
     }
+
+    @GetMapping("/deleted")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<List<WorkoutPlanResponse>>> getDeletedWorkoutPlans() {
+        List<WorkoutPlanResponse> responses = workoutPlanService.getDeletedWorkoutPlans();
+        return ResponseEntity.ok(ApiResponse.success(responses));
+    }
+
+    @PutMapping("/{id}/restore")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> restoreWorkoutPlan(@PathVariable Long id) {
+        workoutPlanService.restoreWorkoutPlan(id);
+        return ResponseEntity.ok(ApiResponse.success("Khôi phục giáo án thành công", null));
+    }
 }

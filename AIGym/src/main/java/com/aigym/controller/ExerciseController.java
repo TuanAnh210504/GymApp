@@ -73,4 +73,18 @@ public class ExerciseController {
         exerciseService.deleteExercise(id);
         return ResponseEntity.ok(ApiResponse.success("Xoá bài tập thành công", null));
     }
+
+    @GetMapping("/deleted")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<List<ExerciseResponse>>> getDeletedExercises() {
+        List<ExerciseResponse> responses = exerciseService.getDeletedExercises();
+        return ResponseEntity.ok(ApiResponse.success(responses));
+    }
+
+    @PutMapping("/{id}/restore")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> restoreExercise(@PathVariable Long id) {
+        exerciseService.restoreExercise(id);
+        return ResponseEntity.ok(ApiResponse.success("Khôi phục bài tập thành công", null));
+    }
 }
