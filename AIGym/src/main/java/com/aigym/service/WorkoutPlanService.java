@@ -19,6 +19,8 @@ public interface WorkoutPlanService {
 
     void deleteWorkoutPlan(Long id);
 
+    void bulkDeleteWorkoutPlans(List<Long> ids);
+
     List<WorkoutPlanResponse> getDeletedWorkoutPlans();
 
     void restoreWorkoutPlan(Long id);

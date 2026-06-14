@@ -60,6 +60,13 @@ public class WorkoutPlanController {
         return ResponseEntity.ok(ApiResponse.success("Xoá giáo án thành công", null));
     }
 
+    @DeleteMapping("/bulk")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> bulkDeleteWorkoutPlans(@RequestBody List<Long> ids) {
+        workoutPlanService.bulkDeleteWorkoutPlans(ids);
+        return ResponseEntity.ok(ApiResponse.success("Xoá " + ids.size() + " giáo án thành công", null));
+    }
+
     @GetMapping("/deleted")
     @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<WorkoutPlanResponse>>> getDeletedWorkoutPlans() {

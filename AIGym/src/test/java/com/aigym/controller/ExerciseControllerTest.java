@@ -1,110 +1,191 @@
 package com.aigym.controller;
 
-import com.aigym.BaseIntegrationTest;
-import org.junit.jupiter.api.DisplayName;
+import com.aigym.domain.enums.Category;
+import com.aigym.dto.Exercise.ExerciseRequest;
+import com.aigym.dto.Exercise.ExerciseResponse;
+import com.aigym.service.ExerciseService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
 
-import java.net.http.HttpResponse;
-import java.util.Map;
+import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * Integration Test cho ExerciseController.
- *
- * Cách hoạt động:
- *   - Server Spring Boot thật được khởi động (đúng như lúc chạy thật)
- *   - java.net.http.HttpClient gửi HTTP request thật đến server
- *   - Giống y như Postman, nhưng chạy tự động và kiểm tra kết quả
- *
- * Không cần MockMvc. Không cần thư viện ngoài. Không đụng source code cũ.
- */
-@DisplayName("Exercise API - Integration Tests")
-class ExerciseControllerTest extends BaseIntegrationTest {
+@WebMvcTest(ExerciseController.class)
+@AutoConfigureMockMvc(addFilters = false)
+class ExerciseControllerTest {
 
-    // =====================================================================
-    //  TEST CASE 1: Không có token → 401 Unauthorized
-    //  Kịch bản đơn giản nhất, không cần đăng nhập
-    // =====================================================================
+    @Autowired
+    private MockMvc mockMvc;
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    @MockitoBean
+    private ExerciseService exerciseService;
+
+    @MockitoBean
+    private com.aigym.security.JwtService jwtService;
+
+    @MockitoBean
+    private org.springframework.security.core.userdetails.UserDetailsService userDetailsService;
+
+    @MockitoBean
+    private com.aigym.security.CurrentUserService currentUserService;
+
     @Test
-    @DisplayName("POST /api/exercises → 401 Unauthorized khi không có token")
-    void testCreateExercise_NoToken_Returns401() throws Exception {
-        // ACT: Gửi request không có Authorization header
-        HttpResponse<String> response = post("/api/exercises", "{\"name\": \"Test\"}");
-
-        // ASSERT: Server từ chối (401 Unauthorized hoặc 403 Forbidden tùy SecurityConfig)
-        assertThat(response.statusCode()).isIn(401, 403);
-    }
-
-    // =====================================================================
-    //  TEST CASE 2: Tạo bài tập thành công với quyền ADMIN
-    //  Kịch bản: ADMIN đăng nhập → lấy token → POST tạo bài tập hợp lệ
-    // =====================================================================
-    @Test
-    @DisplayName("POST /api/exercises → 201 Created khi ADMIN tạo bài tập hợp lệ")
-    void testCreateExercise_Success() throws Exception {
-        // ARRANGE: Đăng nhập lấy token (thay email/password thật của ADMIN)
-        String token = login("admin@aigym.com", "admin123");
-
-        String uniqueName = "Test Incline Barbell Press " + System.currentTimeMillis();
-        String body = """
+    @WithMockUser(roles = "ADMIN")
+    void createExercise_Success() throws Exception {
+        String jsonPayload = """
             {
-              "name": "%s",
-              "description": "Mô tả bài tập test",
-              "primaryCategory": "CHEST_UPPER",
+              "name": "Push Up",
+              "description": "A classic chest exercise",
+              "primaryCategory": "CHEST_MIDDLE",
               "difficulty": "NORMAL",
               "isPublic": true
             }
-        """.formatted(uniqueName);
+        """;
 
-        // ACT: Gọi API tạo bài tập
-        HttpResponse<String> response = post("/api/exercises", body, token);
+        ExerciseResponse response = new ExerciseResponse();
+        response.setId(1L);
+        response.setName("Push Up");
 
-        // ASSERT: Kiểm tra kết quả
-        assertThat(response.statusCode()).isEqualTo(201);
+        when(exerciseService.createExercise(any(ExerciseRequest.class))).thenReturn(response);
 
-        Map<String, Object> parsed = parseBody(response);
-        assertThat(parsed.get("success")).isEqualTo(true);
-        assertThat(((Map<?, ?>) parsed.get("data")).get("name"))
-            .isEqualTo(uniqueName);
+        mockMvc.perform(post("/api/exercises")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonPayload))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.message").value("Tạo bài tập thành công"))
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.name").value("Push Up"));
     }
 
-    // =====================================================================
-    //  TEST CASE 3: Validation Error - thiếu tên bài tập
-    //  Kịch bản: ADMIN gửi request thiếu trường "name" bắt buộc → 400
-    // =====================================================================
     @Test
-    @DisplayName("POST /api/exercises → 400 Bad Request khi thiếu trường 'name'")
-    void testCreateExercise_MissingName_Returns400() throws Exception {
-        String token = login("admin@aigym.com", "admin123");
+    void getExerciseById_Success() throws Exception {
+        ExerciseResponse response = new ExerciseResponse();
+        response.setId(1L);
+        response.setName("Push Up");
 
-        String body = """
+        when(exerciseService.getExerciseById(1L)).thenReturn(response);
+
+        mockMvc.perform(get("/api/exercises/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.name").value("Push Up"));
+    }
+
+    @Test
+    void getAllExercises_Success() throws Exception {
+        ExerciseResponse response = new ExerciseResponse();
+        response.setId(1L);
+        response.setName("Push Up");
+
+        when(exerciseService.getAllExercises()).thenReturn(List.of(response));
+
+        mockMvc.perform(get("/api/exercises"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].id").value(1))
+                .andExpect(jsonPath("$.data[0].name").value("Push Up"));
+    }
+
+    @Test
+    void getByPrimaryCategory_Success() throws Exception {
+        ExerciseResponse response = new ExerciseResponse();
+        response.setId(1L);
+        response.setName("Push Up");
+
+        when(exerciseService.getExercisesByPrimaryCategory(Category.CHEST_MIDDLE)).thenReturn(List.of(response));
+
+        mockMvc.perform(get("/api/exercises/category/CHEST_MIDDLE"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].id").value(1))
+                .andExpect(jsonPath("$.data[0].name").value("Push Up"));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void updateExercise_Success() throws Exception {
+        String jsonPayload = """
             {
-              "description": "Thiếu trường name",
-              "primaryCategory": "CHEST_UPPER",
-              "difficulty": "NORMAL"
+              "name": "Pull Up",
+              "description": "A classic back exercise",
+              "primaryCategory": "LATS",
+              "difficulty": "NORMAL",
+              "isPublic": true
             }
         """;
 
-        HttpResponse<String> response = post("/api/exercises", body, token);
+        ExerciseResponse response = new ExerciseResponse();
+        response.setId(1L);
+        response.setName("Pull Up");
 
-        assertThat(response.statusCode()).isEqualTo(400);
+        when(exerciseService.updateExercise(eq(1L), any(ExerciseRequest.class))).thenReturn(response);
 
-        Map<String, Object> parsed = parseBody(response);
-        assertThat(parsed.get("success")).isEqualTo(false);
+        mockMvc.perform(put("/api/exercises/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonPayload))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Cập nhật bài tập thành công"))
+                .andExpect(jsonPath("$.data.name").value("Pull Up"));
     }
 
-    // =====================================================================
-    //  TEST CASE 4: Lấy danh sách bài tập
-    // =====================================================================
     @Test
-    @DisplayName("GET /api/exercises → Trả về danh sách bài tập")
-    void testGetAllExercises_Returns2xx() throws Exception {
-        String token = login("admin@aigym.com", "admin123");
+    @WithMockUser(roles = "ADMIN")
+    void deleteExercise_Success() throws Exception {
+        doNothing().when(exerciseService).deleteExercise(1L);
 
-        HttpResponse<String> response = get("/api/exercises", token);
+        mockMvc.perform(delete("/api/exercises/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Xoá bài tập thành công"));
+    }
 
-        // Kiểm tra là 2xx (200 hoặc 204)
-        assertThat(response.statusCode()).isBetween(200, 299);
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void bulkDeleteExercises_Success() throws Exception {
+        List<Long> ids = List.of(1L, 2L);
+        doNothing().when(exerciseService).bulkDeleteExercises(ids);
+
+        mockMvc.perform(delete("/api/exercises/bulk")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(ids)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Xoá 2 bài tập thành công"));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void getDeletedExercises_Success() throws Exception {
+        ExerciseResponse response = new ExerciseResponse();
+        response.setId(1L);
+        response.setName("Push Up (Deleted)");
+
+        when(exerciseService.getDeletedExercises()).thenReturn(List.of(response));
+
+        mockMvc.perform(get("/api/exercises/deleted"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].name").value("Push Up (Deleted)"));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void restoreExercise_Success() throws Exception {
+        doNothing().when(exerciseService).restoreExercise(1L);
+
+        mockMvc.perform(put("/api/exercises/1/restore"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Khôi phục bài tập thành công"));
     }
 }

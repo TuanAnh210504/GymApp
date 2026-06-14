@@ -74,6 +74,13 @@ public class ExerciseController {
         return ResponseEntity.ok(ApiResponse.success("Xoá bài tập thành công", null));
     }
 
+    @DeleteMapping("/bulk")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> bulkDeleteExercises(@RequestBody List<Long> ids) {
+        exerciseService.bulkDeleteExercises(ids);
+        return ResponseEntity.ok(ApiResponse.success("Xoá " + ids.size() + " bài tập thành công", null));
+    }
+
     @GetMapping("/deleted")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<ExerciseResponse>>> getDeletedExercises() {

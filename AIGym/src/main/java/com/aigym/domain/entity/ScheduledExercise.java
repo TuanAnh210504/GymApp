@@ -30,6 +30,7 @@ public class ScheduledExercise extends BaseEntity {
     // Bài tập nào (từ thư viện)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exercise_id", nullable = false)
+    @org.hibernate.annotations.NotFound(action = org.hibernate.annotations.NotFoundAction.IGNORE)
     private Exercise exercise;
 
     // Chỉ tiêu kế hoạch (mục tiêu - có thể null nếu chưa xác định)

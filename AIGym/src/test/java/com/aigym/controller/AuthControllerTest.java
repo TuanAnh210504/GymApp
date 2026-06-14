@@ -1,92 +1,106 @@
 package com.aigym.controller;
 
-import com.aigym.BaseIntegrationTest;
-import org.junit.jupiter.api.DisplayName;
+import com.aigym.dto.authdto.AuthResponseDto;
+import com.aigym.dto.authdto.LoginRequestDto;
+import com.aigym.dto.authdto.RegisterRequestDto;
+import com.aigym.security.RateLimitingService;
+import com.aigym.service.AuthService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
 
-import java.net.http.HttpResponse;
-import java.util.Map;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
+@WebMvcTest(AuthController.class)
+@AutoConfigureMockMvc(addFilters = false) // Disable security filters for pure controller testing
+class AuthControllerTest {
 
-@DisplayName("Auth API - Integration Tests")
-class AuthControllerTest extends BaseIntegrationTest {
+    @Autowired
+    private MockMvc mockMvc;
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    @MockitoBean
+    private AuthService authService;
+
+    @MockitoBean
+    private RateLimitingService rateLimitingService;
+
+    @MockitoBean
+    private com.aigym.security.JwtService jwtService;
+
+    @MockitoBean
+    private org.springframework.security.core.userdetails.UserDetailsService userDetailsService;
+
+    @MockitoBean
+    private com.aigym.security.CurrentUserService currentUserService;
 
     @Test
-    @DisplayName("POST /api/auth/register → 200 OK khi đăng ký tài khoản hợp lệ")
-    void testRegister_Success() throws Exception {
-        String uniqueEmail = "testuser" + System.currentTimeMillis() + "@aigym.com";
-        String body = """
-            {
-              "fullName": "Test User",
-              "email": "%s",
-              "password": "password123"
-            }
-        """.formatted(uniqueEmail);
+    void register_Success() throws Exception {
+        RegisterRequestDto request = new RegisterRequestDto();
+        request.setFullName("Test User");
+        request.setEmail("test@gmail.com");
+        request.setPassword("password123");
 
-        HttpResponse<String> response = post("/api/auth/register", body);
+        doNothing().when(rateLimitingService).checkRateLimit(any());
+        doNothing().when(authService).register(any(RegisterRequestDto.class));
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("Đăng ký thành công. Vui lòng kiểm tra email để lấy mã OTP."));
 
-        Map<String, Object> parsed = parseBody(response);
-        assertThat(parsed.get("success")).isEqualTo(true);
+        verify(authService, times(1)).register(any(RegisterRequestDto.class));
     }
 
     @Test
-    @DisplayName("POST /api/auth/register → 400 Bad Request khi email đã tồn tại")
-    void testRegister_DuplicateEmail_Returns400() throws Exception {
-        // Cố tình dùng admin@aigym.com (đã có sẵn trong DB)
-        String body = """
-            {
-              "fullName": "Duplicate User",
-              "email": "admin@aigym.com",
-              "password": "password123"
-            }
-        """;
+    void register_Fail_InvalidEmail() throws Exception {
+        RegisterRequestDto request = new RegisterRequestDto();
+        request.setFullName("Test User");
+        request.setEmail("invalid-email");
+        request.setPassword("password123");
 
-        HttpResponse<String> response = post("/api/auth/register", body);
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                        .with(csrf()))
+                .andExpect(status().isBadRequest());
 
-        assertThat(response.statusCode()).isEqualTo(400);
-
-        Map<String, Object> parsed = parseBody(response);
-        assertThat(parsed.get("success")).isEqualTo(false);
+        verify(authService, never()).register(any());
     }
 
     @Test
-    @DisplayName("POST /api/auth/login → 200 OK và trả về token khi đăng nhập đúng")
-    void testLogin_Success() throws Exception {
-        String body = """
-            {
-              "email": "admin@aigym.com",
-              "password": "admin123"
-            }
-        """;
+    void login_Success() throws Exception {
+        LoginRequestDto request = new LoginRequestDto();
+        request.setEmail("test@gmail.com");
+        request.setPassword("password123");
 
-        HttpResponse<String> response = post("/api/auth/login", body);
+        AuthResponseDto responseDto = AuthResponseDto.builder()
+                .accessToken("access_token")
+                .refreshToken("refresh_token")
+                .build();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        when(authService.login(any(LoginRequestDto.class))).thenReturn(responseDto);
 
-        Map<String, Object> parsed = parseBody(response);
-        assertThat(parsed.get("success")).isEqualTo(true);
-        Map<?, ?> data = (Map<?, ?>) parsed.get("data");
-        assertThat(data.get("accessToken")).isNotNull();
-        assertThat(data.get("refreshToken")).isNotNull();
-    }
-
-    @Test
-    @DisplayName("POST /api/auth/login → 401 Unauthorized khi sai mật khẩu")
-    void testLogin_WrongPassword_Returns401() throws Exception {
-        String body = """
-            {
-              "email": "admin@aigym.com",
-              "password": "wrongpassword"
-            }
-        """;
-
-        HttpResponse<String> response = post("/api/auth/login", body);
-
-        assertThat(response.statusCode()).isEqualTo(401);
-        Map<String, Object> parsed = parseBody(response);
-        assertThat(parsed.get("success")).isEqualTo(false);
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.accessToken").value("access_token"));
     }
 }

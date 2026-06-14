@@ -27,6 +27,8 @@ public interface ExerciseService {
 
     void deleteExercise(Long id);
 
+    void bulkDeleteExercises(List<Long> ids);
+
     List<ExerciseResponse> getDeletedExercises();
 
     void restoreExercise(Long id);

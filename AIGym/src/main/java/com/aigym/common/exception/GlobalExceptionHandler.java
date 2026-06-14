@@ -10,6 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,6 +62,12 @@ public class GlobalExceptionHandler {
         ApiResponse<Void> response = ApiResponse
                 .error("Dữ liệu đầu vào không hợp lệ hoặc sai định dạng.");
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex) {
+        ApiResponse<Void> response = ApiResponse.error("Định dạng dữ liệu không được hỗ trợ.");
+        return new ResponseEntity<>(response, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
     @ExceptionHandler(Exception.class)

@@ -28,6 +28,7 @@ public class WorkoutPlanRequest {
     @NotNull(message = "Mức độ khó không được để trống")
     private Difficulty difficulty;
 
+    @com.fasterxml.jackson.annotation.JsonProperty("isPublic")
     private boolean isPublic = false;
 
     private List<WorkoutPlanDayRequest> planDays;

@@ -44,6 +44,7 @@ public class WorkoutPlan extends BaseEntity {
 
     @Column(nullable = false)
     @Builder.Default
+    @com.fasterxml.jackson.annotation.JsonProperty("isPublic")
     private boolean isPublic = false;
 
     @ManyToOne(fetch = FetchType.LAZY)

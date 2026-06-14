@@ -114,6 +114,17 @@ public class ExerciseServiceImpl implements ExerciseService {
     }
 
     @Override
+    @Transactional
+    public void bulkDeleteExercises(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) return;
+        List<Exercise> exercises = exerciseRepository.findAllById(ids);
+        if (exercises.isEmpty()) {
+            throw new NotFoundException("Không tìm thấy bài tập nào với danh sách ID đã cho");
+        }
+        exerciseRepository.deleteAll(exercises);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<ExerciseResponse> getDeletedExercises() {
         List<Exercise> exercises = exerciseRepository.findAllDeletedNative();

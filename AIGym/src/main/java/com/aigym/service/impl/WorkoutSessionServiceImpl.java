@@ -47,7 +47,8 @@ public class WorkoutSessionServiceImpl implements WorkoutSessionService {
         // Gắn WorkoutPlan nếu có
         if (request.getWorkoutPlanId() != null) {
             WorkoutPlan plan = workoutPlanRepository.findById(request.getWorkoutPlanId())
-                    .orElseThrow(() -> new NotFoundException("Không tìm thấy giáo án với ID: " + request.getWorkoutPlanId()));
+                    .orElseThrow(() -> new NotFoundException(
+                            "Không tìm thấy giáo án với ID: " + request.getWorkoutPlanId()));
             session.setWorkoutPlan(plan);
         }
 
@@ -86,7 +87,8 @@ public class WorkoutSessionServiceImpl implements WorkoutSessionService {
         // Cập nhật WorkoutPlan
         if (request.getWorkoutPlanId() != null) {
             WorkoutPlan plan = workoutPlanRepository.findById(request.getWorkoutPlanId())
-                    .orElseThrow(() -> new NotFoundException("Không tìm thấy giáo án với ID: " + request.getWorkoutPlanId()));
+                    .orElseThrow(() -> new NotFoundException(
+                            "Không tìm thấy giáo án với ID: " + request.getWorkoutPlanId()));
             session.setWorkoutPlan(plan);
         } else {
             session.setWorkoutPlan(null);
@@ -113,7 +115,8 @@ public class WorkoutSessionServiceImpl implements WorkoutSessionService {
         if (request.getLogs() != null) {
             request.getLogs().forEach(logReq -> {
                 Exercise exercise = exerciseRepository.findById(logReq.getExerciseId())
-                        .orElseThrow(() -> new NotFoundException("Không tìm thấy bài tập ID: " + logReq.getExerciseId()));
+                        .orElseThrow(
+                                () -> new NotFoundException("Không tìm thấy bài tập ID: " + logReq.getExerciseId()));
 
                 WorkoutLog log = new WorkoutLog();
                 log.setSession(session); // Quan hệ 2 chiều
@@ -142,7 +145,7 @@ public class WorkoutSessionServiceImpl implements WorkoutSessionService {
 
     private WorkoutSessionResponse toResponse(WorkoutSession session) {
         WorkoutSessionResponse response = genericMapper.mapToDto(session, WorkoutSessionResponse.class);
-        
+
         if (session.getWorkoutPlan() != null) {
             response.setWorkoutPlan(genericMapper.mapToDto(session.getWorkoutPlan(), WorkoutPlanResponse.class));
         }

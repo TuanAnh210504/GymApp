@@ -17,6 +17,7 @@ public class WorkoutPlanResponse {
     private String description;
     private Integer durationWeeks;
     private Difficulty difficulty;
+    @com.fasterxml.jackson.annotation.JsonProperty("isPublic")
     private boolean isPublic;
     private UserResponse creator;
     private LocalDateTime createdAt;

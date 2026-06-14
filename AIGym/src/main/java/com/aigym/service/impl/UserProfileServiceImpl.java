@@ -49,7 +49,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         profile.setGender(request.getGender());
         profile.setActivityLevel(request.getActivityLevel());
         profile.setGoalType(request.getGoalType());
-        
+
         // Auto-calculate Daily Calorie Goal (Overrides frontend value)
         Integer calculatedCalorieGoal = healthCalculatorService.calculateDailyCalorieGoal(profile);
         profile.setDailyCalorieGoal(calculatedCalorieGoal);
@@ -72,12 +72,14 @@ public class UserProfileServiceImpl implements UserProfileService {
         User currentUser = currentUserService.getCurrentUser();
         UserProfile profile = userProfileRepository.findByUserId(currentUser.getId())
                 .orElseThrow(() -> new NotFoundException("Hồ sơ chưa được tạo. Vui lòng cập nhật thông tin."));
-                
+
         int age = healthCalculatorService.calculateAge(profile.getDateOfBirth(), java.time.LocalDate.now());
         double bmi = healthCalculatorService.calculateBMI(profile.getWeight(), profile.getHeight());
-        double bmr = healthCalculatorService.calculateBMR(profile.getWeight(), profile.getHeight(), age, profile.getGender());
+        double bmr = healthCalculatorService.calculateBMR(profile.getWeight(), profile.getHeight(), age,
+                profile.getGender());
         double tdee = healthCalculatorService.calculateTDEE(bmr, profile.getActivityLevel());
-        int dailyCalorieGoal = healthCalculatorService.calculateDailyCalorieGoal(tdee, profile.getGoalType(), profile.getGender());
+        int dailyCalorieGoal = healthCalculatorService.calculateDailyCalorieGoal(tdee, profile.getGoalType(),
+                profile.getGender());
 
         return com.aigym.dto.UserProfile.HealthMetricsResponse.builder()
                 .bmi(bmi)

@@ -9,7 +9,9 @@ import java.util.List;
 @Repository
 public interface WorkoutPlanRepository extends JpaRepository<WorkoutPlan, Long> {
     List<WorkoutPlan> findByIsPublicTrue();
+
     List<WorkoutPlan> findByCreatorId(Long creatorId);
+
     boolean existsByTitle(String title);
 
     @org.springframework.data.jpa.repository.Query(value = "SELECT * FROM workout_plans WHERE is_deleted = true", nativeQuery = true)

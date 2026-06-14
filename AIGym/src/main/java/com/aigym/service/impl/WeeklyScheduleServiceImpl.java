@@ -215,19 +215,42 @@ public class WeeklyScheduleServiceImpl implements WeeklyScheduleService {
 
     // Thủ công map response do cấu trúc lồng sâu 3 tầng
     private WeeklyScheduleResponse toResponse(WeeklySchedule schedule) {
-        WeeklyScheduleResponse response = genericMapper.mapToDto(schedule, WeeklyScheduleResponse.class);
+        WeeklyScheduleResponse response = new WeeklyScheduleResponse();
+        response.setId(schedule.getId());
+        response.setName(schedule.getName());
+        response.setDescription(schedule.getDescription());
+        response.setActive(schedule.isActive());
+        response.setCreatedAt(schedule.getCreatedAt());
+
+        if (schedule.getUser() != null) {
+            response.setUser(genericMapper.mapToDto(schedule.getUser(), com.aigym.dto.user.UserResponse.class));
+        }
 
         List<ScheduleDayResponse> dayResponses = new ArrayList<>();
         if (schedule.getScheduleDays() != null) {
             schedule.getScheduleDays().forEach(day -> {
-                ScheduleDayResponse dayResp = genericMapper.mapToDto(day, ScheduleDayResponse.class);
+                ScheduleDayResponse dayResp = new ScheduleDayResponse();
+                dayResp.setId(day.getId());
+                dayResp.setDayOfWeek(day.getDayOfWeek());
+                dayResp.setLabel(day.getLabel());
+                dayResp.setRestDay(day.isRestDay());
 
                 List<ScheduledExerciseResponse> exResponses = new ArrayList<>();
                 if (day.getScheduledExercises() != null) {
                     day.getScheduledExercises().forEach(ex -> {
-                        ScheduledExerciseResponse exResp = genericMapper.mapToDto(ex, ScheduledExerciseResponse.class);
+                        ScheduledExerciseResponse exResp = new ScheduledExerciseResponse();
+                        exResp.setId(ex.getId());
+                        exResp.setTargetSets(ex.getTargetSets());
+                        exResp.setTargetReps(ex.getTargetReps());
+                        exResp.setTargetWeight(ex.getTargetWeight());
+                        exResp.setOrderIndex(ex.getOrderIndex());
+                        exResp.setNote(ex.getNote());
                         if (ex.getExercise() != null) {
-                            exResp.setExercise(genericMapper.mapToDto(ex.getExercise(), ExerciseResponse.class));
+                            try {
+                                exResp.setExercise(genericMapper.mapToDto(ex.getExercise(), ExerciseResponse.class));
+                            } catch (Exception ignored) {
+                                // Exercise có thể đã bị soft-deleted, bỏ qua
+                            }
                         }
                         exResponses.add(exResp);
                     });

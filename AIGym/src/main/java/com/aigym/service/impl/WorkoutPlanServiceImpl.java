@@ -104,7 +104,7 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
 
         workoutPlanDayRepository.deleteExercisesByPlanIdNative(id);
         workoutPlanDayRepository.deleteDaysByPlanIdNative(id);
-        
+
         plan.getPlanDays().clear();
 
         buildPlanHierarchy(plan, request);
@@ -125,6 +125,17 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
         }
 
         workoutPlanRepository.delete(plan);
+    }
+
+    @Override
+    @Transactional
+    public void bulkDeleteWorkoutPlans(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) return;
+        List<WorkoutPlan> plans = workoutPlanRepository.findAllById(ids);
+        if (plans.isEmpty()) {
+            throw new NotFoundException("Không tìm thấy giáo án nào với danh sách ID đã cho");
+        }
+        workoutPlanRepository.deleteAll(plans);
     }
 
     @Override
@@ -154,7 +165,8 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
                 List<WorkoutPlanExerciseResponse> exResponses = new ArrayList<>();
                 if (day.getPlanExercises() != null) {
                     day.getPlanExercises().forEach(ex -> {
-                        WorkoutPlanExerciseResponse exResp = genericMapper.mapToDto(ex, WorkoutPlanExerciseResponse.class);
+                        WorkoutPlanExerciseResponse exResp = genericMapper.mapToDto(ex,
+                                WorkoutPlanExerciseResponse.class);
                         if (ex.getExercise() != null) {
                             exResp.setExercise(genericMapper.mapToDto(ex.getExercise(), ExerciseResponse.class));
                         }

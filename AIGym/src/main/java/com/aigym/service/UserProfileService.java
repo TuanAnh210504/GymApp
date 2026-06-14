@@ -7,6 +7,8 @@ import com.aigym.dto.UserProfile.HealthMetricsResponse;
 
 public interface UserProfileService {
     UserProfileResponse getMyProfile();
+
     UserProfileResponse createOrUpdateMyProfile(UserProfileRequest request);
+
     HealthMetricsResponse getMyHealthMetrics();
 }
