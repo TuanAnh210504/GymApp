@@ -42,13 +42,24 @@ class AiChatControllerTest {
     @MockitoBean
     private com.aigym.security.CurrentUserService currentUserService;
 
+    @MockitoBean
+    private com.aigym.service.ChatHistoryService chatHistoryService;
+
     @Test
     void chat_Success() throws Exception {
         Map<String, String> request = new HashMap<>();
         request.put("message", "Hello AI");
 
+        com.aigym.domain.entity.User mockUser = new com.aigym.domain.entity.User();
+        mockUser.setId(1L);
+        when(currentUserService.getCurrentUser()).thenReturn(mockUser);
+
+        com.aigym.domain.mongo.ChatSession mockSession = new com.aigym.domain.mongo.ChatSession();
+        mockSession.setId("new-session-id");
+        when(chatHistoryService.createSession(1L, "Hello AI")).thenReturn(mockSession);
+
         SseEmitter mockEmitter = new SseEmitter();
-        when(aiService.chatStream("Hello AI")).thenReturn(mockEmitter);
+        when(aiService.chatStream("new-session-id", "Hello AI")).thenReturn(mockEmitter);
 
         mockMvc.perform(post("/api/v1/chat")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -57,7 +68,7 @@ class AiChatControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_EVENT_STREAM));
 
-        verify(aiService, times(1)).chatStream("Hello AI");
+        verify(aiService, times(1)).chatStream("new-session-id", "Hello AI");
     }
 
     @Test
@@ -70,6 +81,6 @@ class AiChatControllerTest {
                         .with(csrf()))
                 .andExpect(status().isUnsupportedMediaType());
 
-        verify(aiService, never()).chatStream(anyString());
+        verify(aiService, never()).chatStream(anyString(), any());
     }
 }

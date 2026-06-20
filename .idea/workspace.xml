@@ -5,40 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="792ae441-bafb-4c9d-927d-e87ef4db3a43" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/controller/UserController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WorkoutPlanDay.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WorkoutPlanExercise.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WorkoutPlan/WorkoutPlanDayRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WorkoutPlan/WorkoutPlanDayResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WorkoutPlan/WorkoutPlanExerciseRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WorkoutPlan/WorkoutPlanExerciseResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/user/UpdateUserRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/repository/WorkoutPlanDayRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/UserService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/UserServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AIGym/src/test/java/com/aigym/JacksonTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/common/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/common/exception/GlobalExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/controller/ExerciseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/controller/ExerciseController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/controller/WorkoutPlanController.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/controller/WorkoutPlanController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/ScheduleDay.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/ScheduleDay.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/ScheduledExercise.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/ScheduledExercise.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WeeklySchedule.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WeeklySchedule.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WorkoutPlan.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/domain/entity/WorkoutPlan.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WeeklySchedule/ScheduleDayRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WeeklySchedule/ScheduleDayRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WeeklySchedule/WeeklyScheduleRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WeeklySchedule/WeeklyScheduleRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WorkoutPlan/WorkoutPlanRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WorkoutPlan/WorkoutPlanRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WorkoutPlan/WorkoutPlanResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/dto/WorkoutPlan/WorkoutPlanResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/repository/ExerciseRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/repository/ExerciseRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/repository/ScheduleDayRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/repository/ScheduleDayRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/repository/WorkoutPlanRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/repository/WorkoutPlanRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/ExerciseService.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/ExerciseService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/WorkoutPlanService.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/WorkoutPlanService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/AuthServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/ExerciseServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/ExerciseServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/WeeklyScheduleServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/WeeklyScheduleServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/WorkoutPlanServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIGym/src/main/java/com/aigym/service/impl/WorkoutPlanServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -181,6 +148,14 @@
       <workItem from="1780913096905" duration="2863000" />
       <workItem from="1781004646564" duration="7927000" />
       <workItem from="1781093330483" duration="3970000" />
+      <workItem from="1781178254206" duration="6587000" />
+      <workItem from="1781270790296" duration="2989000" />
+      <workItem from="1781316339532" duration="3873000" />
+      <workItem from="1781421600251" duration="11015000" />
+      <workItem from="1781445458356" duration="4000" />
+      <workItem from="1781522077873" duration="7389000" />
+      <workItem from="1781871253802" duration="6358000" />
+      <workItem from="1781951657645" duration="3101000" />
     </task>
     <servers />
   </component>

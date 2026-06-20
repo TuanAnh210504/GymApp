@@ -21,6 +21,12 @@ class AiServiceImplTest {
     private ContextGathererService contextGathererService;
 
     @Mock
+    private com.aigym.security.CurrentUserService currentUserService;
+
+    @Mock
+    private com.aigym.service.ChatHistoryService chatHistoryService;
+
+    @Mock
     private ObjectMapper objectMapper;
 
     @InjectMocks
@@ -33,9 +39,12 @@ class AiServiceImplTest {
 
     @Test
     void chatStream_Success_ReturnsEmitter() {
+        com.aigym.domain.entity.User mockUser = new com.aigym.domain.entity.User();
+        mockUser.setId(1L);
+        when(currentUserService.getCurrentUser()).thenReturn(mockUser);
         when(contextGathererService.gatherUserContext()).thenReturn("Context String");
 
-        SseEmitter emitter = aiService.chatStream("Hello AI");
+        SseEmitter emitter = aiService.chatStream("Hello AI", "test-session");
 
         assertNotNull(emitter);
         // The async execution will run and fail internally because the HttpClient is not mocked,
@@ -45,9 +54,12 @@ class AiServiceImplTest {
 
     @Test
     void chatStream_Fail_ContextException() {
+        com.aigym.domain.entity.User mockUser = new com.aigym.domain.entity.User();
+        mockUser.setId(1L);
+        when(currentUserService.getCurrentUser()).thenReturn(mockUser);
         when(contextGathererService.gatherUserContext()).thenThrow(new RuntimeException("Context Error"));
 
-        SseEmitter emitter = aiService.chatStream("Hello AI");
+        SseEmitter emitter = aiService.chatStream("Hello AI", "test-session");
 
         assertNotNull(emitter);
         // Ensure the exception is caught in the async block and completeWithError is called.
