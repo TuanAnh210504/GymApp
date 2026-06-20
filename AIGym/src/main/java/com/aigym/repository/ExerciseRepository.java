@@ -14,6 +14,12 @@ public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
 
     boolean existsByName(String name);
 
+    java.util.Optional<Exercise> findByNameIgnoreCase(String name);
+
+    java.util.Optional<Exercise> findByNameIgnoreCaseAndIsPublicTrue(String name);
+
+    java.util.Optional<Exercise> findByNameIgnoreCaseAndCreatedByUserID_Id(String name, Long userId);
+
     @org.springframework.data.jpa.repository.Query(value = "SELECT * FROM exercises WHERE is_deleted = true", nativeQuery = true)
     List<Exercise> findAllDeletedNative();
 

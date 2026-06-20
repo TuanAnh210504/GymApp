@@ -181,17 +181,43 @@ public class WeeklyScheduleServiceImpl implements WeeklyScheduleService {
 
                 if (dayReq.getScheduledExercises() != null) {
                     dayReq.getScheduledExercises().forEach(exReq -> {
-                        Exercise exercise = exerciseRepository.findById(exReq.getExerciseId())
-                                .orElseThrow(() -> new NotFoundException(
-                                        "Không tìm thấy bài tập ID: " + exReq.getExerciseId()));
-
                         ScheduledExercise scheduledExercise = new ScheduledExercise();
-                        scheduledExercise.setScheduleDay(day); // Quan hệ 2 chiều
-                        scheduledExercise.setExercise(exercise);
+                        scheduledExercise.setScheduleDay(day);
+
+                        if (exReq.getExerciseId() != null) {
+                            // Bài tập từ thư viện
+                            Exercise exercise = exerciseRepository.findById(exReq.getExerciseId())
+                                    .orElseThrow(() -> new NotFoundException(
+                                            "Không tìm thấy bài tập ID: " + exReq.getExerciseId()));
+                            scheduledExercise.setExercise(exercise);
+                        } else if (exReq.getCustomExercise() != null && exReq.getCustomExercise().getName() != null) {
+                            // Bài tập AI tự chế - Phương án 2:
+                            // 1. Tìm bài tập công khai (isPublic=true) cùng tên -> dùng chung
+                            // 2. Tìm bài tập riêng của user hiện tại cùng tên -> dùng lại
+                            // 3. Không có -> tạo mới (private) cho user hiện tại
+                            String customName = exReq.getCustomExercise().getName().trim();
+                            User currentUser = currentUserService.getCurrentUser();
+                            Exercise exercise = exerciseRepository
+                                    .findByNameIgnoreCaseAndIsPublicTrue(customName)
+                                    .orElseGet(() -> exerciseRepository
+                                            .findByNameIgnoreCaseAndCreatedByUserID_Id(customName, currentUser.getId())
+                                            .orElseGet(() -> {
+                                                Exercise newExercise = genericMapper.mapToEntity(
+                                                        exReq.getCustomExercise(), Exercise.class);
+                                                newExercise.setCreatedByUserID(currentUser);
+                                                newExercise.setPublic(false);
+                                                return exerciseRepository.save(newExercise);
+                                            }));
+                            scheduledExercise.setExercise(exercise);
+                        } else {
+                            // Bỏ qua nếu không có cả hai
+                            return;
+                        }
+
                         scheduledExercise.setTargetSets(exReq.getTargetSets());
                         scheduledExercise.setTargetReps(exReq.getTargetReps());
                         scheduledExercise.setTargetWeight(exReq.getTargetWeight());
-                        scheduledExercise.setOrderIndex(exReq.getOrderIndex());
+                        scheduledExercise.setOrderIndex(exReq.getOrderIndex() != null ? exReq.getOrderIndex() : day.getScheduledExercises().size());
                         scheduledExercise.setNote(exReq.getNote());
 
                         day.getScheduledExercises().add(scheduledExercise);
@@ -240,18 +266,14 @@ public class WeeklyScheduleServiceImpl implements WeeklyScheduleService {
                     day.getScheduledExercises().forEach(ex -> {
                         ScheduledExerciseResponse exResp = new ScheduledExerciseResponse();
                         exResp.setId(ex.getId());
+                        if (ex.getExercise() != null) {
+                            exResp.setExercise(genericMapper.mapToDto(ex.getExercise(), com.aigym.dto.Exercise.ExerciseResponse.class));
+                        }
                         exResp.setTargetSets(ex.getTargetSets());
                         exResp.setTargetReps(ex.getTargetReps());
                         exResp.setTargetWeight(ex.getTargetWeight());
                         exResp.setOrderIndex(ex.getOrderIndex());
                         exResp.setNote(ex.getNote());
-                        if (ex.getExercise() != null) {
-                            try {
-                                exResp.setExercise(genericMapper.mapToDto(ex.getExercise(), ExerciseResponse.class));
-                            } catch (Exception ignored) {
-                                // Exercise có thể đã bị soft-deleted, bỏ qua
-                            }
-                        }
                         exResponses.add(exResp);
                     });
                 }
