@@ -1,6 +1,10 @@
 package com.aigym.service.impl;
 
+import com.aigym.domain.entity.User;
+import com.aigym.domain.mongo.ChatMessage;
+import com.aigym.security.CurrentUserService;
 import com.aigym.service.AiService;
+import com.aigym.service.ChatHistoryService;
 import com.aigym.service.ContextGathererService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +18,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -23,6 +28,8 @@ import java.util.concurrent.Executors;
 public class AiServiceImpl implements AiService {
 
     private final ContextGathererService contextGathererService;
+    private final CurrentUserService currentUserService;
+    private final ChatHistoryService chatHistoryService;
     private final ObjectMapper objectMapper;
 
     @Value("${gemini.api.key}")
@@ -31,71 +38,38 @@ public class AiServiceImpl implements AiService {
     private final HttpClient httpClient = HttpClient.newBuilder().build();
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
+    // Danh sách các model dự phòng (từ nhanh nhất đến các bản cũ hơn)
+    private static final String[] GEMINI_MODELS = {
+        "gemini-2.5-flash",
+        "gemini-2.5-pro",
+        "gemini-2.0-flash-exp",
+        "gemini-2.0-pro-exp"
+    };
+
     @Override
-    public SseEmitter chatStream(String userMessage) {
+    public SseEmitter chatStream(String sessionId, String userMessage) {
         SseEmitter emitter = new SseEmitter(60000L); // 1 minute timeout
+
+        // Lấy thông tin user ở luồng chính (tránh mất SecurityContext trong luồng async)
+        User currentUser = currentUserService.getCurrentUser();
+        Long userId = currentUser.getId();
 
         executor.execute(() -> {
             try {
-                String context = contextGathererService.gatherUserContext();
+                // Lưu câu hỏi của User vào DB
+                chatHistoryService.saveMessage(sessionId, userId, "USER", userMessage);
 
-                String requestBody = buildGeminiRequest(context, userMessage);
+                // Lấy Context hệ thống (Profile, Lịch tập hiện tại)
+                String systemContext = contextGathererService.gatherUserContext();
 
-                String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:streamGenerateContent?alt=sse&key="
-                        + geminiApiKey;
+                // Lấy lịch sử chat của Session này
+                List<ChatMessage> chatHistory = chatHistoryService.getContextMessages(sessionId, 20);
 
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(url))
-                        .header("Content-Type", "application/json")
-                        .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                        .build();
+                // Build Request gửi cho Gemini
+                String requestBody = buildGeminiRequest(systemContext, chatHistory, userMessage);
 
-                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofLines())
-                        .thenAccept(response -> {
-                            if (response.statusCode() != 200) {
-                                String errorBody = response.body().reduce("", (a, b) -> a + "\n" + b);
-                                log.error("Gemini API Error: Status {}, Body: {}", response.statusCode(), errorBody);
-                                try {
-                                    var errorJson = objectMapper.createObjectNode();
-                                    errorJson.put("text", "Xin lỗi, đã có lỗi kết nối với AI (" + response.statusCode() + ").");
-                                    emitter.send(SseEmitter.event().data(objectMapper.writeValueAsString(errorJson)));
-                                } catch (Exception e) {}
-                                emitter.complete();
-                                return;
-                            }
-                            
-                            response.body().forEach(line -> {
-                                if (line.startsWith("data: ")) {
-                                    String jsonData = line.substring(6);
-                                    if (!jsonData.trim().isEmpty() && !jsonData.equals("[DONE]")) {
-                                        try {
-                                            JsonNode rootNode = objectMapper.readTree(jsonData);
-                                            JsonNode candidates = rootNode.path("candidates");
-                                            if (candidates.isArray() && candidates.size() > 0) {
-                                                JsonNode parts = candidates.get(0).path("content").path("parts");
-                                                if (parts.isArray() && parts.size() > 0) {
-                                                    String text = parts.get(0).path("text").asText();
-                                                    if (text != null && !text.isEmpty()) {
-                                                        var outputJson = objectMapper.createObjectNode();
-                                                        outputJson.put("text", text);
-                                                        emitter.send(SseEmitter.event()
-                                                                .data(objectMapper.writeValueAsString(outputJson)));
-                                                    }
-                                                }
-                                            }
-                                        } catch (Exception e) {
-                                            log.error("Error parsing Gemini stream data", e);
-                                        }
-                                    }
-                                }
-                            });
-                            emitter.complete();
-                        })
-                        .exceptionally(ex -> {
-                            log.error("Error in Gemini API call", ex);
-                            emitter.completeWithError(ex);
-                            return null;
-                        });
+                // Khởi chạy vòng lặp thử các model (bắt đầu từ model đầu tiên)
+                tryModel(0, requestBody, emitter, sessionId, userId);
 
             } catch (Exception e) {
                 log.error("Error initiating stream", e);
@@ -106,17 +80,134 @@ public class AiServiceImpl implements AiService {
         return emitter;
     }
 
-    private String buildGeminiRequest(String systemContext, String userMessage) throws Exception {
+    private void tryModel(int modelIndex, String requestBody, SseEmitter emitter, String sessionId, Long userId) {
+        if (modelIndex >= GEMINI_MODELS.length) {
+            // Đã thử hết tất cả các model nhưng đều thất bại
+            try {
+                var errorJson = objectMapper.createObjectNode();
+                errorJson.put("text", "Xin lỗi, hiện tại tất cả các hệ thống AI đều đang quá tải. Vui lòng thử lại sau.");
+                emitter.send(SseEmitter.event().data(objectMapper.writeValueAsString(errorJson)));
+            } catch (Exception e) {}
+            emitter.complete();
+            return;
+        }
+
+        String modelName = GEMINI_MODELS[modelIndex];
+        log.info("Đang thử kết nối AI với model: {}", modelName);
+
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/" + modelName + ":streamGenerateContent?alt=sse&key=" + geminiApiKey;
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+        StringBuilder fullAiResponse = new StringBuilder();
+
+        httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofLines())
+                .thenAccept(response -> {
+                    if (response.statusCode() != 200) {
+                        // Đọc và đóng body ngay lập tức để giải phóng socket
+                        String errorBody;
+                        try (var bodyStream = response.body()) {
+                            errorBody = bodyStream.reduce("", (a, b) -> a + "\n" + b);
+                        }
+                        log.warn("Model {} bị lỗi: Status {}, Body: {}", modelName, response.statusCode(), errorBody);
+
+                        // Nếu bị lỗi 503 (High Demand), 429 (Rate limit), 404 (Not Found) hoặc 5xx, chuyển sang model dự phòng
+                        if (response.statusCode() == 503 || response.statusCode() == 429 || response.statusCode() == 404 || response.statusCode() >= 500) {
+                            tryModel(modelIndex + 1, requestBody, emitter, sessionId, userId);
+                        } else {
+                            // Lỗi cú pháp hoặc lỗi xác thực (400, 401, 403), không thử lại
+                            try {
+                                var errorJson = objectMapper.createObjectNode();
+                                errorJson.put("text", "Xin lỗi, đã có lỗi kết nối với AI (" + response.statusCode() + ").");
+                                emitter.send(SseEmitter.event().data(objectMapper.writeValueAsString(errorJson)));
+                            } catch (Exception e) {}
+                            emitter.complete();
+                        }
+                        return;
+                    }
+
+                    // [FIX 2] try-with-resources: Java tự đóng stream sau khi xử lý xong hoặc khi có lỗi
+                    try (var lines = response.body()) {
+                        lines.forEach(line -> {
+                            if (line.startsWith("data: ")) {
+                                String jsonData = line.substring(6);
+                                if (!jsonData.trim().isEmpty() && !jsonData.equals("[DONE]")) {
+                                    try {
+                                        JsonNode rootNode = objectMapper.readTree(jsonData);
+                                        JsonNode candidates = rootNode.path("candidates");
+                                        if (candidates.isArray() && candidates.size() > 0) {
+                                            JsonNode parts = candidates.get(0).path("content").path("parts");
+                                            if (parts.isArray() && parts.size() > 0) {
+                                                String text = parts.get(0).path("text").asText();
+                                                if (text != null && !text.isEmpty()) {
+                                                    fullAiResponse.append(text);
+                                                    var outputJson = objectMapper.createObjectNode();
+                                                    outputJson.put("text", text);
+                                                    emitter.send(SseEmitter.event()
+                                                            .data(objectMapper.writeValueAsString(outputJson)));
+                                                }
+                                            }
+                                        }
+                                    } catch (Exception e) {
+                                        log.error("Error parsing Gemini stream data", e);
+                                    }
+                                }
+                            }
+                        });
+                    } catch (Exception e) {
+                        log.error("Error reading Gemini response stream for model {}", modelName, e);
+                    }
+
+                    // Chỉ lưu lịch sử vào DB nếu phản hồi thành công và có dữ liệu
+                    if (fullAiResponse.length() > 0) {
+                        chatHistoryService.saveMessage(sessionId, userId, "AI", fullAiResponse.toString());
+                    }
+                    emitter.complete();
+                })
+                .exceptionally(ex -> {
+                    log.warn("Lỗi mạng khi kết nối model {}", modelName, ex);
+                    tryModel(modelIndex + 1, requestBody, emitter, sessionId, userId);
+                    return null;
+                });
+    }
+
+    private String buildGeminiRequest(String systemContext, List<ChatMessage> chatHistory, String currentUserMessage) throws Exception {
         var root = objectMapper.createObjectNode();
 
+        // System Instruction
         var systemInstruction = root.putObject("system_instruction");
         systemInstruction.putObject("parts").put("text", systemContext);
 
+        // Contents (History + Current Message)
         var contents = root.putArray("contents");
+
+        // 1. Thêm lịch sử chat vào ngữ cảnh
+        // [FIX 1] Dùng vòng lặp có index để kiểm tra phần tử CUỐI CÙNG chính xác
+        // (indexOf luôn trả vị trí đầu tiên, sẽ sai khi User gõ lại câu đã gõ trước đó)
+        for (int i = 0; i < chatHistory.size(); i++) {
+            ChatMessage msg = chatHistory.get(i);
+            // Bỏ qua tin nhắn hiện tại nếu nó nằm ở ĐÚNG vị trí cuối của lịch sử
+            if (i == chatHistory.size() - 1
+                    && msg.getSender().equals("USER")
+                    && msg.getContent().equals(currentUserMessage)) {
+                continue; // Sẽ thêm ở bước 2
+            }
+
+            var historyContent = contents.addObject();
+            historyContent.put("role", msg.getSender().equals("AI") ? "model" : "user");
+            var parts = historyContent.putArray("parts");
+            parts.addObject().put("text", msg.getContent());
+        }
+
+        // 2. Thêm tin nhắn hiện tại
         var userContent = contents.addObject();
         userContent.put("role", "user");
         var parts = userContent.putArray("parts");
-        parts.addObject().put("text", userMessage);
+        parts.addObject().put("text", currentUserMessage);
 
         return objectMapper.writeValueAsString(root);
     }

@@ -1,6 +1,5 @@
 package com.aigym.dto.WeeklySchedule;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,15 +9,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ScheduledExerciseRequest {
 
-    @NotNull(message = "ID bài tập không được để trống")
+    // Bài tập từ thư viện - null nếu là bài AI tự chế
     private Long exerciseId;
+
+    // Chi tiết bài tập do AI tự chế - null nếu dùng exerciseId
+    private com.aigym.dto.Exercise.ExerciseRequest customExercise;
 
     private Integer targetSets;
     private Integer targetReps;
     private Double targetWeight;
-
-    @NotNull(message = "Thứ tự bài tập không được để trống")
     private Integer orderIndex;
-
     private String note;
 }

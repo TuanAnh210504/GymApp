@@ -35,7 +35,6 @@ public class WorkoutLog extends BaseEntity {
     // Log này thuộc về bài tập nào
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exercise_id", nullable = false)
-    @org.hibernate.annotations.NotFound(action = org.hibernate.annotations.NotFoundAction.IGNORE)
     private Exercise exercise;
 
     @Column(nullable = false)

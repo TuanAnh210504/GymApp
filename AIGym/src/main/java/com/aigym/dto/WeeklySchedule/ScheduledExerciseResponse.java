@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ScheduledExerciseResponse {
     private Long id;
-    private ExerciseResponse exercise; // Cần trả về cả thông tin bài tập (tên, hình ảnh...)
+    private ExerciseResponse exercise;
     private Integer targetSets;
     private Integer targetReps;
     private Double targetWeight;

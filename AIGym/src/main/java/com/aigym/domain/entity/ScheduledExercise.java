@@ -3,6 +3,9 @@
  * Mô tả: Một bài tập cụ thể được người dùng xếp vào một ngày trong lịch tuần.
  *         Lưu chỉ tiêu kế hoạch (số hiệp, số reps, tạ mục tiêu) để người dùng
  *         biết cần tập gì và bao nhiêu trong buổi hôm đó.
+ *
+ *         1. Bài tập từ thư viện (có sẵn trong CSDL)
+ *         2. Bài tập do AI tự chế (tạo trực tiếp vào CSDL với isPublic=false)
  * Bảng DB: scheduled_exercises
  */
 package com.aigym.domain.entity;
@@ -27,10 +30,9 @@ public class ScheduledExercise extends BaseEntity {
     @JoinColumn(name = "schedule_day_id", nullable = false)
     private ScheduleDay scheduleDay;
 
-    // Bài tập nào (từ thư viện)
+    // Bài tập từ thư viện (nullable: null nếu là bài tập AI tự chế)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exercise_id", nullable = false)
-    @org.hibernate.annotations.NotFound(action = org.hibernate.annotations.NotFoundAction.IGNORE)
+    @JoinColumn(name = "exercise_id", nullable = true)
     private Exercise exercise;
 
     // Chỉ tiêu kế hoạch (mục tiêu - có thể null nếu chưa xác định)
