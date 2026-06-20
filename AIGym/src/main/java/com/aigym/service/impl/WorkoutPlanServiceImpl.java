@@ -100,7 +100,7 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
         plan.setDescription(request.getDescription());
         plan.setDurationWeeks(request.getDurationWeeks());
         plan.setDifficulty(request.getDifficulty());
-        plan.setPublic(request.isPublic());
+        plan.setPublic(request.getIsPublic() != null && request.getIsPublic());
 
         workoutPlanDayRepository.deleteExercisesByPlanIdNative(id);
         workoutPlanDayRepository.deleteDaysByPlanIdNative(id);
@@ -130,7 +130,8 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
     @Override
     @Transactional
     public void bulkDeleteWorkoutPlans(List<Long> ids) {
-        if (ids == null || ids.isEmpty()) return;
+        if (ids == null || ids.isEmpty())
+            return;
         List<WorkoutPlan> plans = workoutPlanRepository.findAllById(ids);
         if (plans.isEmpty()) {
             throw new NotFoundException("Không tìm thấy giáo án nào với danh sách ID đã cho");
@@ -188,7 +189,7 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
                 day.setWorkoutPlan(plan);
                 day.setDayOfWeek(dayReq.getDayOfWeek());
                 day.setLabel(dayReq.getLabel());
-                day.setRestDay(dayReq.isRestDay());
+                day.setRestDay(dayReq.getRestDay() != null && dayReq.getRestDay());
 
                 if (dayReq.getPlanExercises() != null) {
                     dayReq.getPlanExercises().forEach(exReq -> {

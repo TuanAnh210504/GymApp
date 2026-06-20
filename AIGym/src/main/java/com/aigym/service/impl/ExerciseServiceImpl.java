@@ -21,7 +21,8 @@ import java.util.List;
 /**
  * Implementation của ExerciseService.
  * Tuân thủ SRP: Class này chỉ chịu trách nhiệm xử lý nghiệp vụ Exercise.
- * Tuân thủ OCP: Có thể mở rộng bằng cách thêm method mới mà không cần sửa code cũ.
+ * Tuân thủ OCP: Có thể mở rộng bằng cách thêm method mới mà không cần sửa code
+ * cũ.
  */
 @Service
 @RequiredArgsConstructor
@@ -87,9 +88,11 @@ public class ExerciseServiceImpl implements ExerciseService {
         }
 
         // Có thể map thủ công hoặc dùng mapper. mapToEntity sẽ tạo ra đối tượng mới,
-        // nên đối với update, ta thường copy properties. ModelMapper cung cấp map(source, destination).
+        // nên đối với update, ta thường copy properties. ModelMapper cung cấp
+        // map(source, destination).
         // Tuy nhiên GenericMapper hiện tại chỉ có mapToEntity tạo mới.
-        // Để giữ tính toàn vẹn Hibernate, ta cập nhật các trường thủ công hoặc thêm method vào GenericMapper.
+        // Để giữ tính toàn vẹn Hibernate, ta cập nhật các trường thủ công hoặc thêm
+        // method vào GenericMapper.
         // Dùng thủ công cho Update để an toàn cho Hibernate Entity:
         exercise.setName(request.getName());
         exercise.setDescription(request.getDescription());
@@ -99,7 +102,7 @@ public class ExerciseServiceImpl implements ExerciseService {
         exercise.setEquipment(request.getEquipment());
         exercise.setImageUrl(request.getImageUrl());
         exercise.setVideoUrl(request.getVideoUrl());
-        exercise.setPublic(request.isPublic());
+        exercise.setPublic(request.getIsPublic());
 
         Exercise updated = exerciseRepository.save(exercise);
         return toResponse(updated);
@@ -116,7 +119,8 @@ public class ExerciseServiceImpl implements ExerciseService {
     @Override
     @Transactional
     public void bulkDeleteExercises(List<Long> ids) {
-        if (ids == null || ids.isEmpty()) return;
+        if (ids == null || ids.isEmpty())
+            return;
         List<Exercise> exercises = exerciseRepository.findAllById(ids);
         if (exercises.isEmpty()) {
             throw new NotFoundException("Không tìm thấy bài tập nào với danh sách ID đã cho");
@@ -148,8 +152,9 @@ public class ExerciseServiceImpl implements ExerciseService {
     private ExerciseResponse toResponse(Exercise exercise) {
         // Map các trường cơ bản
         ExerciseResponse response = genericMapper.mapToDto(exercise, ExerciseResponse.class);
-        
-        // Custom map cho trường User vì tên field khác nhau (createdByUserID vs createdByUser)
+
+        // Custom map cho trường User vì tên field khác nhau (createdByUserID vs
+        // createdByUser)
         if (exercise.getCreatedByUserID() != null) {
             response.setCreatedByUser(genericMapper.mapToDto(exercise.getCreatedByUserID(), UserResponse.class));
         }
