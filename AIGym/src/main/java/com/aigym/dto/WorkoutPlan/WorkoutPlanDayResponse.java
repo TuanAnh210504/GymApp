@@ -14,6 +14,6 @@ public class WorkoutPlanDayResponse {
     private Long id;
     private DayOfWeek dayOfWeek;
     private String label;
-    private boolean restDay;
+    private Boolean restDay;
     private List<WorkoutPlanExerciseResponse> planExercises;
 }

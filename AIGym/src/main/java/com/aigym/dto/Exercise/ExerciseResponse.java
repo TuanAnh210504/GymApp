@@ -43,7 +43,7 @@ public class ExerciseResponse {
 
     private UserResponse createdByUser;
 
-    private boolean isPublic;
+    private Boolean isPublic;
 
     private LocalDateTime createdAt;
 }

@@ -18,7 +18,7 @@ public class WorkoutPlanDayRequest {
     @NotNull(message = "Nhãn không được để trống")
     private String label;
 
-    private boolean restDay;
+    private Boolean restDay;
 
     private List<WorkoutPlanExerciseRequest> planExercises;
 }

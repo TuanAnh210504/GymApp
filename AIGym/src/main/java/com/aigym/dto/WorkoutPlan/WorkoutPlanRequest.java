@@ -29,7 +29,7 @@ public class WorkoutPlanRequest {
     private Difficulty difficulty;
 
     @com.fasterxml.jackson.annotation.JsonProperty("isPublic")
-    private boolean isPublic = false;
+    private Boolean isPublic = false;
 
     private List<WorkoutPlanDayRequest> planDays;
 }

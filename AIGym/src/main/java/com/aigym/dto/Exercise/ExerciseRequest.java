@@ -40,5 +40,5 @@ public class ExerciseRequest {
 
     private String videoUrl;
 
-    private boolean isPublic = false;
+    private Boolean isPublic = false;
 }
