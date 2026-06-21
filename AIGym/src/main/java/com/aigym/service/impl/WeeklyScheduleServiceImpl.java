@@ -102,7 +102,7 @@ public class WeeklyScheduleServiceImpl implements WeeklyScheduleService {
     @Transactional(readOnly = true)
     public List<WeeklyScheduleResponse> getMyWeeklySchedules() {
         User currentUser = currentUserService.getCurrentUser();
-        List<WeeklySchedule> schedules = weeklyScheduleRepository.findByUserId(currentUser.getId());
+        List<WeeklySchedule> schedules = weeklyScheduleRepository.findWithDetailsByUserId(currentUser.getId());
         return schedules.stream().map(this::toResponse).toList();
     }
 
@@ -229,7 +229,8 @@ public class WeeklyScheduleServiceImpl implements WeeklyScheduleService {
     }
 
     private WeeklySchedule getScheduleAndVerifyOwnership(Long id) {
-        WeeklySchedule schedule = weeklyScheduleRepository.findById(id)
+        // Dùng EntityGraph để tải toàn bộ cây dữ liệu bằng JOIN (tránh N+1)
+        WeeklySchedule schedule = weeklyScheduleRepository.findWithDetailsById(id)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy lịch tập với ID: " + id));
 
         User currentUser = currentUserService.getCurrentUser();

@@ -110,4 +110,32 @@ public class HealthCalculatorServiceImpl implements HealthCalculatorService {
         double tdee = calculateTDEE(bmr, profile.getActivityLevel());
         return calculateDailyCalorieGoal(tdee, profile.getGoalType(), profile.getGender());
     }
+
+    @Override
+    public Integer calculateProteinGoal(Integer calories) {
+        if (calories == null || calories <= 0) return 150;
+        // 30% of calories from protein (1g = 4 kcal)
+        return (int) Math.round((calories * 0.30) / 4.0);
+    }
+
+    @Override
+    public Integer calculateCarbsGoal(Integer calories) {
+        if (calories == null || calories <= 0) return 200;
+        // 45% of calories from carbs (1g = 4 kcal)
+        return (int) Math.round((calories * 0.45) / 4.0);
+    }
+
+    @Override
+    public Integer calculateFatsGoal(Integer calories) {
+        if (calories == null || calories <= 0) return 65;
+        // 25% of calories from fats (1g = 9 kcal)
+        return (int) Math.round((calories * 0.25) / 9.0);
+    }
+
+    @Override
+    public Integer calculateFiberGoal(Integer calories) {
+        if (calories == null || calories <= 0) return 30;
+        // Khuyến nghị 14g chất xơ / 1000 kcal (theo FDA)
+        return (int) Math.round((calories / 1000.0) * 14.0);
+    }
 }

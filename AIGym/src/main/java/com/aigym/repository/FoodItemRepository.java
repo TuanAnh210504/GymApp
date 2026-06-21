@@ -5,9 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FoodItemRepository extends JpaRepository<FoodItem, Long> {
     List<FoodItem> findByName(String name);
     boolean existsByName(String name);
+    
+    Optional<FoodItem> findByNameIgnoreCaseAndIsPublicTrue(String name);
+    Optional<FoodItem> findByNameIgnoreCaseAndIsPublicFalseAndUserId(String name, Long userId);
 }

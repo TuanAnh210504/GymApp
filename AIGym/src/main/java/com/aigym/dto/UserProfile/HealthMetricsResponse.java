@@ -14,4 +14,8 @@ public class HealthMetricsResponse {
     private Double bmr;
     private Double tdee;
     private Integer dailyCalorieGoal;
+    private Integer dailyProteinGoal;
+    private Integer dailyCarbsGoal;
+    private Integer dailyFatsGoal;
+    private Integer dailyFiberGoal;
 }

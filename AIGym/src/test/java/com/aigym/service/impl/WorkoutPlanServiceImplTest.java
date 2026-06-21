@@ -103,7 +103,7 @@ class WorkoutPlanServiceImplTest {
 
     @Test
     void getWorkoutPlanById_Success() {
-        when(workoutPlanRepository.findById(1L)).thenReturn(Optional.of(plan));
+        when(workoutPlanRepository.findWithDetailsById(1L)).thenReturn(Optional.of(plan));
         when(genericMapper.mapToDto(plan, WorkoutPlanResponse.class)).thenReturn(response);
 
         WorkoutPlanResponse res = workoutPlanService.getWorkoutPlanById(1L);
@@ -115,7 +115,7 @@ class WorkoutPlanServiceImplTest {
     @Test
     void updateWorkoutPlan_Success() {
         request.setTitle("Plan 2");
-        when(workoutPlanRepository.findById(1L)).thenReturn(Optional.of(plan));
+        when(workoutPlanRepository.findWithDetailsById(1L)).thenReturn(Optional.of(plan));
         when(currentUserService.getCurrentUser()).thenReturn(currentUser);
         when(workoutPlanRepository.existsByTitle("Plan 2")).thenReturn(false);
         when(workoutPlanRepository.save(any(WorkoutPlan.class))).thenReturn(plan);
@@ -136,7 +136,7 @@ class WorkoutPlanServiceImplTest {
     void updateWorkoutPlan_Fail_NotOwner() {
         User otherUser = User.builder().role(Role.USER).build();
         otherUser.setId(2L);
-        when(workoutPlanRepository.findById(1L)).thenReturn(Optional.of(plan));
+        when(workoutPlanRepository.findWithDetailsById(1L)).thenReturn(Optional.of(plan));
         when(currentUserService.getCurrentUser()).thenReturn(otherUser);
 
         assertThrows(BadRequestException.class, () -> workoutPlanService.updateWorkoutPlan(1L, request));
@@ -144,7 +144,7 @@ class WorkoutPlanServiceImplTest {
 
     @Test
     void deleteWorkoutPlan_Success() {
-        when(workoutPlanRepository.findById(1L)).thenReturn(Optional.of(plan));
+        when(workoutPlanRepository.findWithDetailsById(1L)).thenReturn(Optional.of(plan));
         when(currentUserService.getCurrentUser()).thenReturn(currentUser);
 
         assertDoesNotThrow(() -> workoutPlanService.deleteWorkoutPlan(1L));

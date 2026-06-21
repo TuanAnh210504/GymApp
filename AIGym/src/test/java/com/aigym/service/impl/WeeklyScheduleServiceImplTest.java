@@ -204,7 +204,7 @@ class WeeklyScheduleServiceImplTest {
 
     @Test
     void getWeeklyScheduleById_Success() {
-        when(weeklyScheduleRepository.findById(1L)).thenReturn(Optional.of(schedule));
+        when(weeklyScheduleRepository.findWithDetailsById(1L)).thenReturn(Optional.of(schedule));
         when(currentUserService.getCurrentUser()).thenReturn(currentUser);
         when(genericMapper.mapToDto(any(User.class), eq(com.aigym.dto.user.UserResponse.class))).thenReturn(new com.aigym.dto.user.UserResponse());
 
@@ -218,7 +218,7 @@ class WeeklyScheduleServiceImplTest {
     void getWeeklyScheduleById_Fail_NotOwner() {
         User otherUser = User.builder().build();
         otherUser.setId(2L);
-        when(weeklyScheduleRepository.findById(1L)).thenReturn(Optional.of(schedule));
+        when(weeklyScheduleRepository.findWithDetailsById(1L)).thenReturn(Optional.of(schedule));
         when(currentUserService.getCurrentUser()).thenReturn(otherUser);
 
         assertThrows(BadRequestException.class, () -> weeklyScheduleService.getWeeklyScheduleById(1L));
@@ -227,7 +227,7 @@ class WeeklyScheduleServiceImplTest {
     @Test
     void getMyWeeklySchedules_Success() {
         when(currentUserService.getCurrentUser()).thenReturn(currentUser);
-        when(weeklyScheduleRepository.findByUserId(1L)).thenReturn(List.of(schedule));
+        when(weeklyScheduleRepository.findWithDetailsByUserId(1L)).thenReturn(List.of(schedule));
 
         List<WeeklyScheduleResponse> res = weeklyScheduleService.getMyWeeklySchedules();
 
@@ -250,7 +250,7 @@ class WeeklyScheduleServiceImplTest {
     @Test
     void updateWeeklySchedule_Success() {
         request.setName("Updated Schedule");
-        when(weeklyScheduleRepository.findById(1L)).thenReturn(Optional.of(schedule));
+        when(weeklyScheduleRepository.findWithDetailsById(1L)).thenReturn(Optional.of(schedule));
         when(currentUserService.getCurrentUser()).thenReturn(currentUser);
         when(weeklyScheduleRepository.save(any(WeeklySchedule.class))).thenReturn(schedule);
         when(genericMapper.mapToDto(any(User.class), eq(com.aigym.dto.user.UserResponse.class))).thenReturn(new com.aigym.dto.user.UserResponse());
@@ -265,7 +265,7 @@ class WeeklyScheduleServiceImplTest {
     @Test
     void setActiveSchedule_Success() {
         schedule.setActive(false);
-        when(weeklyScheduleRepository.findById(1L)).thenReturn(Optional.of(schedule));
+        when(weeklyScheduleRepository.findWithDetailsById(1L)).thenReturn(Optional.of(schedule));
         when(currentUserService.getCurrentUser()).thenReturn(currentUser);
         when(weeklyScheduleRepository.findByUserIdAndIsActiveTrue(1L)).thenReturn(Optional.empty());
         when(weeklyScheduleRepository.save(any(WeeklySchedule.class))).thenReturn(schedule);
@@ -278,7 +278,7 @@ class WeeklyScheduleServiceImplTest {
 
     @Test
     void deleteWeeklySchedule_Success() {
-        when(weeklyScheduleRepository.findById(1L)).thenReturn(Optional.of(schedule));
+        when(weeklyScheduleRepository.findWithDetailsById(1L)).thenReturn(Optional.of(schedule));
         when(currentUserService.getCurrentUser()).thenReturn(currentUser);
 
         assertDoesNotThrow(() -> weeklyScheduleService.deleteWeeklySchedule(1L));

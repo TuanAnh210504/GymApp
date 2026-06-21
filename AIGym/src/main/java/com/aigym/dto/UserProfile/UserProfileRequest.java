@@ -24,6 +24,9 @@ public class UserProfileRequest {
     private Double targetWeight; // kg
 
     private Integer dailyCalorieGoal;
+    private Integer dailyProteinGoal;
+    private Integer dailyCarbsGoal;
+    private Integer dailyFatsGoal;
 
     private java.time.LocalDate dateOfBirth;
     private com.aigym.domain.enums.Gender gender;

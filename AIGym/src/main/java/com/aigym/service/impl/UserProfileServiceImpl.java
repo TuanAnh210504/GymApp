@@ -53,6 +53,12 @@ public class UserProfileServiceImpl implements UserProfileService {
         // Auto-calculate Daily Calorie Goal (Overrides frontend value)
         Integer calculatedCalorieGoal = healthCalculatorService.calculateDailyCalorieGoal(profile);
         profile.setDailyCalorieGoal(calculatedCalorieGoal);
+        
+        // Auto-calculate Macros
+        profile.setDailyProteinGoal(healthCalculatorService.calculateProteinGoal(calculatedCalorieGoal));
+        profile.setDailyCarbsGoal(healthCalculatorService.calculateCarbsGoal(calculatedCalorieGoal));
+        profile.setDailyFatsGoal(healthCalculatorService.calculateFatsGoal(calculatedCalorieGoal));
+        profile.setDailyFiberGoal(healthCalculatorService.calculateFiberGoal(calculatedCalorieGoal));
 
         UserProfile saved = userProfileRepository.save(profile);
         return toResponse(saved);
@@ -86,6 +92,10 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .bmr(bmr)
                 .tdee(tdee)
                 .dailyCalorieGoal(dailyCalorieGoal)
+                .dailyProteinGoal(healthCalculatorService.calculateProteinGoal(dailyCalorieGoal))
+                .dailyCarbsGoal(healthCalculatorService.calculateCarbsGoal(dailyCalorieGoal))
+                .dailyFatsGoal(healthCalculatorService.calculateFatsGoal(dailyCalorieGoal))
+                .dailyFiberGoal(healthCalculatorService.calculateFiberGoal(dailyCalorieGoal))
                 .build();
     }
 }

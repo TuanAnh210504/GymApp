@@ -5,10 +5,13 @@ import com.aigym.dto.UserProfile.UserProfileResponse;
 import com.aigym.dto.WeeklySchedule.WeeklyScheduleResponse;
 import com.aigym.dto.WeeklySchedule.ScheduleDayResponse;
 import com.aigym.dto.WeeklySchedule.ScheduledExerciseResponse;
+import com.aigym.dto.MealPlan.WeeklyMealPlanResponse;
+import com.aigym.dto.MealPlan.MealPlanDayResponse;
 import com.aigym.service.ContextGathererService;
 import com.aigym.service.ExerciseService;
 import com.aigym.service.UserProfileService;
 import com.aigym.service.WeeklyScheduleService;
+import com.aigym.service.WeeklyMealPlanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,7 @@ public class ContextGathererServiceImpl implements ContextGathererService {
     private final UserProfileService userProfileService;
     private final WeeklyScheduleService weeklyScheduleService;
     private final ExerciseService exerciseService;
+    private final WeeklyMealPlanService weeklyMealPlanService;
 
     @Override
     public String gatherUserContext() {
@@ -43,8 +47,20 @@ public class ContextGathererServiceImpl implements ContextGathererService {
                         profile.getWeight() != null ? profile.getWeight() : "Chưa rõ"));
                 context.append(String.format("- Mức độ vận động: %s\n",
                         profile.getActivityLevel() != null ? profile.getActivityLevel() : "Chưa rõ"));
-                context.append(String.format("- Mục tiêu: %s\n\n",
+                context.append(String.format("- Mục tiêu: %s\n",
                         profile.getGoalType() != null ? profile.getGoalType() : "Chưa rõ"));
+                
+                // Add Daily Goals to prompt
+                if (profile.getDailyCalorieGoal() != null) {
+                    context.append(String.format("- Mức Năng lượng Mục tiêu (TDEE đã điều chỉnh theo Mục tiêu): %s kcal/ngày\n", profile.getDailyCalorieGoal()));
+                    context.append("  (Chỉ số dinh dưỡng: ");
+                    if (profile.getDailyProteinGoal() != null) context.append(String.format("Protein: %sg, ", profile.getDailyProteinGoal()));
+                    if (profile.getDailyCarbsGoal() != null) context.append(String.format("Carbs: %sg, ", profile.getDailyCarbsGoal()));
+                    if (profile.getDailyFatsGoal() != null) context.append(String.format("Fat: %sg, ", profile.getDailyFatsGoal()));
+                    if (profile.getDailyFiberGoal() != null) context.append(String.format("Fiber: %sg", profile.getDailyFiberGoal()));
+                    context.append(")\n");
+                }
+                context.append("\n");
             }
         } catch (Exception e) {
             // Ignore if no profile found
@@ -93,6 +109,36 @@ public class ContextGathererServiceImpl implements ContextGathererService {
                         .map(ExerciseResponse::getName)
                         .collect(Collectors.joining(", "));
                 context.append("Danh sách: ").append(exerciseNames).append("\n\n");
+            }
+        } catch (Exception e) {
+            // Ignore
+        }
+
+        try {
+            WeeklyMealPlanResponse mealPlan = weeklyMealPlanService.getMyActiveMealPlan();
+            if (mealPlan != null) {
+                context.append("--- THỰC ĐƠN HIỆN TẠI (TÊN: ").append(mealPlan.getName()).append(") ---\n");
+                if (mealPlan.getMealPlanDays() != null && !mealPlan.getMealPlanDays().isEmpty()) {
+                    for (MealPlanDayResponse day : mealPlan.getMealPlanDays()) {
+                        context.append("- ").append(day.getDayOfWeek()).append(": ");
+                        if (day.isRestDay()) {
+                            context.append("Ngày ăn tự do (Cheat day)\n");
+                        } else {
+                            if (day.getPlannedMeals() == null || day.getPlannedMeals().isEmpty()) {
+                                context.append("Chưa có món ăn\n");
+                            } else {
+                                String mealsStr = day.getPlannedMeals().stream()
+                                        .map(m -> String.format("%s (%.0fg) - %s",
+                                                m.getFoodItem() != null ? m.getFoodItem().getName() : m.getCustomFoodName(),
+                                                m.getAmount(), m.getMealType()))
+                                        .collect(Collectors.joining(", "));
+                                context.append(mealsStr).append("\n");
+                            }
+                        }
+                    }
+                }
+            } else {
+                context.append("Người dùng hiện chưa áp dụng thực đơn nào.\n");
             }
         } catch (Exception e) {
             // Ignore
@@ -184,7 +230,41 @@ public class ContextGathererServiceImpl implements ContextGathererService {
         context.append(
                 "- Nếu là bài tập mới (không có trong danh sách), BẮT BUỘC cung cấp đủ: description, primary_category (dùng MỘT TRONG CÁC GIÁ TRỊ TỪ ENUM: CHEST_UPPER, CHEST_MIDDLE, CHEST_LOWER, LATS, RHOMBOIDS, TRAPS_UPPER, TRAPS_MIDDLE_LOWER, LOWER_BACK, SHOULDERS_FRONT, SHOULDERS_SIDE, SHOULDERS_REAR, ROTATOR_CUFF, BICEPS, TRICEPS, FOREARMS, QUADS, HAMSTRINGS, GLUTES, CALVES, ADDUCTORS, ABDUCTORS, ABS_UPPER, ABS_LOWER, OBLIQUES, SERRATUS_ANTERIOR, CORE, CARDIO, FULL_BODY, NECK, STRETCHING, MOBILITY), difficulty (EASY, NORMAL, HARD), equipment. Nếu đã có trong danh sách thì có thể bỏ qua các trường này.\n");
         context.append(
-                "- JSON phải chứa ĐẦY ĐỦ 7 ngày (MONDAY đến SUNDAY). Ngày không tập: is_rest_day=true, exercises=[]. JSON không có comment.\n");
+                "- JSON lịch tập phải chứa ĐẦY ĐỦ 7 ngày (MONDAY đến SUNDAY). Ngày không tập: is_rest_day=true, exercises=[]. JSON không có comment.\n\n");
+
+        context.append("- Nếu người dùng yêu cầu tạo THỰC ĐƠN / KẾ HOẠCH BỮA ĂN (Meal Plan), hãy trả lời ngắn gọn và BẮT BUỘC kèm theo một khối JSON nằm trong thẻ ```json và ```.\n");
+        context.append("- Cấu trúc JSON Thực đơn bắt buộc phải tuân theo định dạng sau:\n");
+        context.append("```json\n");
+        context.append("{\n");
+        context.append("  \"type\": \"meal_plan\",\n");
+        context.append("  \"data\": {\n");
+        context.append("    \"name\": \"[TÊN_THỰC_ĐƠN]\",\n");
+        context.append("    \"description\": \"[MÔ_TẢ]\",\n");
+        context.append("    \"days\": [\n");
+        context.append("      {\n");
+        context.append("        \"day_of_week\": \"MONDAY\",\n");
+        context.append("        \"label\": \"Ngày ăn bình thường\",\n");
+        context.append("        \"is_rest_day\": false,\n");
+        context.append("        \"meals\": [\n");
+        context.append("          {\n");
+        context.append("            \"food_name\": \"[TÊN_MÓN_ĂN]\",\n");
+        context.append("            \"amount\": 200,\n");
+        context.append("            \"meal_type\": \"LUNCH\",\n");
+        context.append("            \"calories_per_100g\": 165,\n");
+        context.append("            \"protein\": 31.0,\n");
+        context.append("            \"carbs\": 0.0,\n");
+        context.append("            \"fat\": 3.6,\n");
+        context.append("            \"fiber\": 0.0,\n");
+        context.append("            \"note\": \"\"\n");
+        context.append("          }\n");
+        context.append("        ]\n");
+        context.append("      }\n");
+        context.append("    ]\n");
+        context.append("  }\n");
+        context.append("}\n");
+        context.append("```\n");
+        context.append("- JSON thực đơn phải chứa ĐẦY ĐỦ 7 ngày (MONDAY đến SUNDAY). Bữa ăn có thể là BREAKFAST, LUNCH, DINNER, SNACK. Tính lượng calories, protein, carbs, fat, fiber TRÊN MỖI 100 GRAM (Lưu ý: trên 100g chứ không phải cho lượng ăn amount). Nếu ngày nào ăn tự do (cheat day): is_rest_day=true, meals=[].\n");
+        context.append("- LƯU Ý QUAN TRỌNG VỀ DINH DƯỠNG: Bạn phải tính toán TỔNG số Calo, Đạm, Tinh bột, Béo từ các món ăn trong 1 ngày sao cho tổng số này CÀNG SÁT VỚI MỨC NĂNG LƯỢNG MỤC TIÊU CỦA NGƯỜI DÙNG CÀNG TỐT (đã được cung cấp ở phần Hồ Sơ). Ví dụ nếu mục tiêu là 2500 kcal, các món ăn cộng lại nên nằm quanh mức 2400-2600 kcal.\n");
 
         return context.toString();
     }

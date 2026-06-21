@@ -42,6 +42,18 @@ public class UserProfile extends BaseEntity {
     private Integer dailyCalorieGoal; // Mục tiêu calo mỗi ngày
 
     @Column
+    private Integer dailyProteinGoal; // Mục tiêu protein (g)
+
+    @Column
+    private Integer dailyCarbsGoal; // Mục tiêu carbs (g)
+
+    @Column
+    private Integer dailyFatsGoal; // Mục tiêu fats (g)
+
+    @Column
+    private Integer dailyFiberGoal; // Mục tiêu chất xơ (g)
+
+    @Column
     private java.time.LocalDate dateOfBirth;
 
     @Enumerated(EnumType.STRING)

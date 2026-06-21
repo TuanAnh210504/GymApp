@@ -16,6 +16,10 @@ public class UserProfileResponse {
     private Double weight;
     private Double targetWeight;
     private Integer dailyCalorieGoal;
+    private Integer dailyProteinGoal;
+    private Integer dailyCarbsGoal;
+    private Integer dailyFatsGoal;
+    private Integer dailyFiberGoal;
     
     private java.time.LocalDate dateOfBirth;
     private com.aigym.domain.enums.Gender gender;

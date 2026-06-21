@@ -22,6 +22,8 @@ import com.aigym.repository.WorkoutPlanDayRepository;
 import com.aigym.repository.ExerciseRepository;
 import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +41,7 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "public-workout-plans", allEntries = true)
     public WorkoutPlanResponse createWorkoutPlan(WorkoutPlanRequest request) {
         if (workoutPlanRepository.existsByTitle(request.getTitle())) {
             throw new BadRequestException("Giáo án với tên '" + request.getTitle() + "' đã tồn tại");
@@ -57,15 +60,18 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
     @Override
     @Transactional(readOnly = true)
     public WorkoutPlanResponse getWorkoutPlanById(Long id) {
-        WorkoutPlan plan = workoutPlanRepository.findById(id)
+        // Dùng EntityGraph để tải toàn bộ cây dữ liệu bằng JOIN (tránh N+1)
+        WorkoutPlan plan = workoutPlanRepository.findWithDetailsById(id)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy giáo án với ID: " + id));
         return toResponse(plan);
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable("public-workout-plans")
     public List<WorkoutPlanResponse> getPublicWorkoutPlans() {
-        List<WorkoutPlan> plans = workoutPlanRepository.findByIsPublicTrue();
+        // Dùng EntityGraph để tải toàn bộ cây dữ liệu bằng JOIN (tránh N+1)
+        List<WorkoutPlan> plans = workoutPlanRepository.findWithDetailsByIsPublicTrue();
         return plans.stream().map(this::toResponse).toList();
     }
 
@@ -73,14 +79,16 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
     @Transactional(readOnly = true)
     public List<WorkoutPlanResponse> getMyWorkoutPlans() {
         User currentUser = currentUserService.getCurrentUser();
-        List<WorkoutPlan> plans = workoutPlanRepository.findByCreatorId(currentUser.getId());
+        // Dùng EntityGraph để tải toàn bộ cây dữ liệu bằng JOIN (tránh N+1)
+        List<WorkoutPlan> plans = workoutPlanRepository.findWithDetailsByCreatorId(currentUser.getId());
         return plans.stream().map(this::toResponse).toList();
     }
 
     @Override
     @Transactional
+    @CacheEvict(value = "public-workout-plans", allEntries = true)
     public WorkoutPlanResponse updateWorkoutPlan(Long id, WorkoutPlanRequest request) {
-        WorkoutPlan plan = workoutPlanRepository.findById(id)
+        WorkoutPlan plan = workoutPlanRepository.findWithDetailsById(id)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy giáo án với ID: " + id));
 
         // Kiểm tra quyền sở hữu (chỉ người tạo mới được sửa, hoặc là ADMIN)
@@ -115,8 +123,9 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "public-workout-plans", allEntries = true)
     public void deleteWorkoutPlan(Long id) {
-        WorkoutPlan plan = workoutPlanRepository.findById(id)
+        WorkoutPlan plan = workoutPlanRepository.findWithDetailsById(id)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy giáo án với ID: " + id));
 
         User currentUser = currentUserService.getCurrentUser();
@@ -129,6 +138,7 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "public-workout-plans", allEntries = true)
     public void bulkDeleteWorkoutPlans(List<Long> ids) {
         if (ids == null || ids.isEmpty())
             return;
@@ -148,6 +158,7 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "public-workout-plans", allEntries = true)
     public void restoreWorkoutPlan(Long id) {
         int updated = workoutPlanRepository.restoreNative(id);
         if (updated == 0) {

@@ -50,17 +50,25 @@ public class AiServiceImpl implements AiService {
     public SseEmitter chatStream(String sessionId, String userMessage) {
         SseEmitter emitter = new SseEmitter(60000L); // 1 minute timeout
 
-        // Lấy thông tin user ở luồng chính (tránh mất SecurityContext trong luồng async)
+        // Lấy thông tin user và Context ở luồng chính (tránh mất SecurityContext trong luồng async)
         User currentUser = currentUserService.getCurrentUser();
         Long userId = currentUser.getId();
+        
+        // Gọi contextGathererService TRƯỚC KHI vào executor.execute() để giữ SecurityContext
+        String systemContextStr;
+        try {
+            systemContextStr = contextGathererService.gatherUserContext();
+        } catch (Exception e) {
+            log.error("Failed to gather system context", e);
+            systemContextStr = ""; // fallback
+        }
+        
+        final String systemContext = systemContextStr;
 
         executor.execute(() -> {
             try {
                 // Lưu câu hỏi của User vào DB
                 chatHistoryService.saveMessage(sessionId, userId, "USER", userMessage);
-
-                // Lấy Context hệ thống (Profile, Lịch tập hiện tại)
-                String systemContext = contextGathererService.gatherUserContext();
 
                 // Lấy lịch sử chat của Session này
                 List<ChatMessage> chatHistory = chatHistoryService.getContextMessages(sessionId, 20);

@@ -43,4 +43,13 @@ public class FoodItem extends BaseEntity {
     private Double fat; // Chất béo (g/100g)
 
     private Double fiber; // Chất xơ (g/100g) - tuỳ chọn
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean isPublic = true; // true: mọi user đều thấy, false: chỉ user tạo mới thấy
+
+    // Người tạo món ăn (nếu isPublic = false, AI tạo riêng cho user)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = true)
+    private User user;
 }

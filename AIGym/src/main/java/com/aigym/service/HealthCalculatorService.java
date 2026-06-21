@@ -14,4 +14,9 @@ public interface HealthCalculatorService {
     Double calculateTDEE(Double bmr, ActivityLevel activityLevel);
     Integer calculateDailyCalorieGoal(Double tdee, GoalType goalType, Gender gender);
     Integer calculateDailyCalorieGoal(UserProfile profile);
+    
+    Integer calculateProteinGoal(Integer calories);
+    Integer calculateCarbsGoal(Integer calories);
+    Integer calculateFatsGoal(Integer calories);
+    Integer calculateFiberGoal(Integer calories);
 }
