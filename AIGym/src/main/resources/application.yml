@@ -5,6 +5,10 @@ spring:
   profiles:
     active: dev
 
+  mvc:
+    async:
+      request-timeout: 300000
+
 server:
   port: 8080
 

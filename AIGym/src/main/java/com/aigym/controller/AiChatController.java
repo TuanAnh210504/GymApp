@@ -28,12 +28,13 @@ public class AiChatController {
     public SseEmitter chat(@RequestBody Map<String, String> request) {
         String message = request.getOrDefault("message", "");
         String sessionId = request.get("sessionId"); // Có thể null nếu chưa có session
+        String tag = request.getOrDefault("tag", "GENERAL");
         
         if (sessionId == null || sessionId.isEmpty()) {
             // Tự động tạo session mới nếu chưa truyền
             User currentUser = currentUserService.getCurrentUser();
             String title = message.length() > 20 ? message.substring(0, 20) + "..." : message;
-            ChatSession newSession = chatHistoryService.createSession(currentUser.getId(), title);
+            ChatSession newSession = chatHistoryService.createSession(currentUser.getId(), title, tag);
             sessionId = newSession.getId();
         }
 
@@ -52,7 +53,8 @@ public class AiChatController {
     public ResponseEntity<ChatSession> createSession(@RequestBody Map<String, String> request) {
         User currentUser = currentUserService.getCurrentUser();
         String title = request.getOrDefault("title", "Đoạn chat mới");
-        return ResponseEntity.ok(chatHistoryService.createSession(currentUser.getId(), title));
+        String tag = request.getOrDefault("tag", "GENERAL");
+        return ResponseEntity.ok(chatHistoryService.createSession(currentUser.getId(), title, tag));
     }
 
     // API lấy chi tiết các tin nhắn trong một Session

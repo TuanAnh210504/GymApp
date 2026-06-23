@@ -233,6 +233,8 @@ public class ContextGathererServiceImpl implements ContextGathererService {
                 "- JSON lịch tập phải chứa ĐẦY ĐỦ 7 ngày (MONDAY đến SUNDAY). Ngày không tập: is_rest_day=true, exercises=[]. JSON không có comment.\n\n");
 
         context.append("- Nếu người dùng yêu cầu tạo THỰC ĐƠN / KẾ HOẠCH BỮA ĂN (Meal Plan), hãy trả lời ngắn gọn và BẮT BUỘC kèm theo một khối JSON nằm trong thẻ ```json và ```.\n");
+        context.append("- ❌ CẤM TUYỆT ĐỐI: KHÔNG ĐƯỢC GỘP nhiều nguyên liệu vào MỘT đối tượng trong mảng `meals`. Tuyệt đối không đặt tên bữa kiểu 'Sinh tố cải xoăn chuối sữa hạnh nhân' hay 'Yến mạch nấu sữa với quả mọng' — đây là SAI.\n");
+        context.append("- ✅ LÀM ĐÚNG: Tách riêng từng thành phần. Ví dụ, bữa trưa bao gồm: 1 mục 'Yến mạch khô', 1 mục 'Sữa tươi không đường', 1 mục 'Quả mọng' (Mỗi mục có calories/protein/carbs/fat riêng).\n");
         context.append("- Cấu trúc JSON Thực đơn bắt buộc phải tuân theo định dạng sau:\n");
         context.append("```json\n");
         context.append("{\n");
@@ -247,15 +249,26 @@ public class ContextGathererServiceImpl implements ContextGathererService {
         context.append("        \"is_rest_day\": false,\n");
         context.append("        \"meals\": [\n");
         context.append("          {\n");
-        context.append("            \"food_name\": \"[TÊN_MÓN_ĂN]\",\n");
-        context.append("            \"amount\": 200,\n");
+        context.append("            \"food_name\": \"Gạo lứt (chưa nấu)\",\n");
+        context.append("            \"amount\": 80,\n");
+        context.append("            \"meal_type\": \"LUNCH\",\n");
+        context.append("            \"calories_per_100g\": 370,\n");
+        context.append("            \"protein\": 7.5,\n");
+        context.append("            \"carbs\": 77.0,\n");
+        context.append("            \"fat\": 2.7,\n");
+        context.append("            \"fiber\": 3.5,\n");
+        context.append("            \"note\": \"Nấu chín mềm\"\n");
+        context.append("          },\n");
+        context.append("          {\n");
+        context.append("            \"food_name\": \"Ức gà sống\",\n");
+        context.append("            \"amount\": 150,\n");
         context.append("            \"meal_type\": \"LUNCH\",\n");
         context.append("            \"calories_per_100g\": 165,\n");
         context.append("            \"protein\": 31.0,\n");
         context.append("            \"carbs\": 0.0,\n");
         context.append("            \"fat\": 3.6,\n");
         context.append("            \"fiber\": 0.0,\n");
-        context.append("            \"note\": \"\"\n");
+        context.append("            \"note\": \"Áp chảo\"\n");
         context.append("          }\n");
         context.append("        ]\n");
         context.append("      }\n");

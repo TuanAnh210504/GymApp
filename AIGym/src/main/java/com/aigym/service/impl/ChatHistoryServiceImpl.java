@@ -27,10 +27,11 @@ public class ChatHistoryServiceImpl implements ChatHistoryService {
     private final Map<String, List<ChatMessage>> activeContexts = new ConcurrentHashMap<>();
 
     @Override
-    public ChatSession createSession(Long userId, String title) {
+    public ChatSession createSession(Long userId, String title, String tag) {
         ChatSession session = ChatSession.builder()
                 .userId(userId)
                 .title(title)
+                .tag(tag != null ? tag : "GENERAL")
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();

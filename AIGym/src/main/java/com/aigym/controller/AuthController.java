@@ -6,6 +6,8 @@ import com.aigym.dto.authdto.LoginRequestDto;
 import com.aigym.dto.authdto.RefreshTokenRequestDto;
 import com.aigym.dto.authdto.RegisterRequestDto;
 import com.aigym.dto.authdto.VerifyOtpRequestDto;
+import com.aigym.dto.authdto.ForgotPasswordRequestDto;
+import com.aigym.dto.authdto.ResetPasswordRequestDto;
 import com.aigym.service.AuthService;
 import com.aigym.security.RateLimitingService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -66,5 +68,17 @@ public class AuthController {
     public ResponseEntity<ApiResponse<AuthResponseDto>> refresh(@Valid @RequestBody RefreshTokenRequestDto request) {
         AuthResponseDto response = authService.refresh(request);
         return ResponseEntity.ok(ApiResponse.success("Làm mới token thành công", response));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ApiResponse<Void>> forgotPassword(@Valid @RequestBody ForgotPasswordRequestDto request) {
+        authService.forgotPassword(request);
+        return ResponseEntity.ok(ApiResponse.success("Mã OTP đã được gửi đến email của bạn.", null));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiResponse<Void>> resetPassword(@Valid @RequestBody ResetPasswordRequestDto request) {
+        authService.resetPassword(request);
+        return ResponseEntity.ok(ApiResponse.success("Đặt lại mật khẩu thành công. Bạn có thể đăng nhập bằng mật khẩu mới.", null));
     }
 }

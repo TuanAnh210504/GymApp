@@ -8,7 +8,7 @@ import java.util.List;
 public interface ChatHistoryService {
     
     // Tầng 2: Quản lý Session
-    ChatSession createSession(Long userId, String title);
+    ChatSession createSession(Long userId, String title, String tag);
     List<ChatSession> getUserSessions(Long userId);
     void deleteSession(String sessionId);
     

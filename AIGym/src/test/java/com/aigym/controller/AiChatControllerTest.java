@@ -56,7 +56,7 @@ class AiChatControllerTest {
 
         com.aigym.domain.mongo.ChatSession mockSession = new com.aigym.domain.mongo.ChatSession();
         mockSession.setId("new-session-id");
-        when(chatHistoryService.createSession(1L, "Hello AI")).thenReturn(mockSession);
+        when(chatHistoryService.createSession(1L, "Hello AI", "GENERAL")).thenReturn(mockSession);
 
         SseEmitter mockEmitter = new SseEmitter();
         when(aiService.chatStream("new-session-id", "Hello AI")).thenReturn(mockEmitter);

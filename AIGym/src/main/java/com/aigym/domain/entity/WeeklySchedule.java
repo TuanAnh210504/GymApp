@@ -11,8 +11,8 @@ import com.aigym.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "weekly_schedules")
@@ -43,5 +43,5 @@ public class WeeklySchedule extends BaseEntity {
     // Danh sách các ngày tập trong lịch
     @OneToMany(mappedBy = "weeklySchedule", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<ScheduleDay> scheduleDays = new ArrayList<>();
+    private Set<ScheduleDay> scheduleDays = new LinkedHashSet<>();
 }

@@ -12,8 +12,8 @@ import com.aigym.domain.enums.DayOfWeek;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(
@@ -50,5 +50,5 @@ public class ScheduleDay extends BaseEntity {
     @OneToMany(mappedBy = "scheduleDay", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("orderIndex ASC")
     @Builder.Default
-    private List<ScheduledExercise> scheduledExercises = new ArrayList<>();
+    private Set<ScheduledExercise> scheduledExercises = new LinkedHashSet<>();
 }

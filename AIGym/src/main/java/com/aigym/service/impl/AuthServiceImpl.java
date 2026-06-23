@@ -8,6 +8,8 @@ import com.aigym.dto.authdto.LoginRequestDto;
 import com.aigym.dto.authdto.RegisterRequestDto;
 import com.aigym.dto.authdto.RefreshTokenRequestDto;
 import com.aigym.dto.authdto.VerifyOtpRequestDto;
+import com.aigym.dto.authdto.ForgotPasswordRequestDto;
+import com.aigym.dto.authdto.ResetPasswordRequestDto;
 import com.aigym.domain.entity.User;
 import com.aigym.domain.entity.RefreshTokenSession;
 import com.aigym.domain.enums.Role;
@@ -234,5 +236,56 @@ public class AuthServiceImpl implements AuthService {
                 .fullName(user.getFullName())
                 .email(user.getEmail())
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public void forgotPassword(ForgotPasswordRequestDto request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy tài khoản với email này"));
+
+        if (!user.isActive()) {
+            throw new BadRequestException("Tài khoản chưa được xác thực email. Vui lòng xác thực trước.");
+        }
+
+        String otpCode = generateOtp();
+        user.setVerificationCode(otpCode);
+        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(5));
+        user.setFailedOtpAttempts(0);
+        userRepository.save(user);
+
+        emailService.sendForgotPasswordEmail(user.getEmail(), otpCode);
+    }
+
+    @Override
+    @Transactional
+    public void resetPassword(ResetPasswordRequestDto request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy tài khoản với email này"));
+
+        if (user.getVerificationCodeExpiresAt() != null
+                && user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("Mã OTP đã hết hạn");
+        }
+
+        if (user.getVerificationCode() == null || !user.getVerificationCode().equals(request.getOtp())) {
+            user.setFailedOtpAttempts(user.getFailedOtpAttempts() + 1);
+            if (user.getFailedOtpAttempts() >= 5) {
+                user.setVerificationCode(null);
+                user.setFailedOtpAttempts(0);
+                userRepository.save(user);
+                throw new BadRequestException(
+                        "Bạn đã nhập sai mã xác nhận 5 lần. Mã xác nhận đã bị hủy, vui lòng yêu cầu mã mới.");
+            }
+            userRepository.save(user);
+            throw new BadRequestException(
+                    "Mã xác nhận không chính xác. Bạn còn " + (5 - user.getFailedOtpAttempts()) + " lần thử.");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setVerificationCode(null);
+        user.setVerificationCodeExpiresAt(null);
+        user.setFailedOtpAttempts(0);
+        userRepository.save(user);
     }
 }

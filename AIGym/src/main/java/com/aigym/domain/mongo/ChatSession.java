@@ -22,6 +22,8 @@ public class ChatSession {
     
     private String title;
     
+    private String tag; 
+    
     private LocalDateTime createdAt;
     
     private LocalDateTime updatedAt;
