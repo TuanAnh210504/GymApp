@@ -77,6 +77,12 @@ public class WeeklyMealPlanController {
         return ResponseEntity.ok(ApiResponse.success("Đã ghi lại vào nhật ký thành công", response));
     }
 
+    @PutMapping("/meals/{mealId}/uneaten")
+    public ResponseEntity<ApiResponse<Void>> unmarkMealAsEaten(@PathVariable Long mealId) {
+        weeklyMealPlanService.unmarkMealAsEaten(mealId);
+        return ResponseEntity.ok(ApiResponse.success("Đã huỷ đánh dấu thành công", null));
+    }
+
     @PutMapping("/meals/{mealId}/amount")
     public ResponseEntity<ApiResponse<com.aigym.dto.MealPlan.PlannedMealResponse>> updateMealAmount(
             @PathVariable Long mealId,

@@ -9,6 +9,8 @@ import com.aigym.mapper.GenericMapper;
 import com.aigym.repository.FoodItemRepository;
 import com.aigym.service.FoodItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +41,13 @@ public class FoodItemServiceImpl implements FoodItemService {
         FoodItem foodItem = foodItemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy thực phẩm với ID: " + id));
         return genericMapper.mapToDto(foodItem, FoodItemResponse.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<FoodItemResponse> getAllFoodItems(Pageable pageable) {
+        return foodItemRepository.findAll(pageable)
+                .map(item -> genericMapper.mapToDto(item, FoodItemResponse.class));
     }
 
     @Override

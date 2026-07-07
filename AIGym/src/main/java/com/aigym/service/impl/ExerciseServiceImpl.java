@@ -13,6 +13,8 @@ import com.aigym.repository.ExerciseRepository;
 import com.aigym.security.CurrentUserService;
 import com.aigym.service.ExerciseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,6 +64,12 @@ public class ExerciseServiceImpl implements ExerciseService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<ExerciseResponse> getAllExercises(Pageable pageable) {
+        return exerciseRepository.findAll(pageable).map(this::toResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<ExerciseResponse> getAllExercises() {
         List<Exercise> exercises = exerciseRepository.findAll();
         // Sử dụng mapListToDto của GenericMapper và chỉnh sửa lại trường User
@@ -70,9 +78,32 @@ public class ExerciseServiceImpl implements ExerciseService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<ExerciseResponse> getExercisesByPrimaryCategory(Category category, Pageable pageable) {
+        return exerciseRepository.findByPrimaryCategory(category, pageable).map(this::toResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<ExerciseResponse> getExercisesByPrimaryCategory(Category category) {
         List<Exercise> exercises = exerciseRepository.findByPrimaryCategory(category);
         return exercises.stream().map(this::toResponse).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ExerciseResponse> searchExercises(String keyword, Category category, Pageable pageable) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            if (category == null) {
+                return getAllExercises(pageable);
+            } else {
+                return getExercisesByPrimaryCategory(category, pageable);
+            }
+        }
+        
+        if (category != null) {
+            return exerciseRepository.findByNameContainingIgnoreCaseAndPrimaryCategory(keyword, category, pageable).map(this::toResponse);
+        }
+        return exerciseRepository.findByNameContainingIgnoreCase(keyword, pageable).map(this::toResponse);
     }
 
     @Override

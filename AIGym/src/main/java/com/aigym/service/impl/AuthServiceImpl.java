@@ -288,4 +288,24 @@ public class AuthServiceImpl implements AuthService {
         user.setFailedOtpAttempts(0);
         userRepository.save(user);
     }
+
+    @Override
+    @Transactional
+    public void logout(String refreshToken) {
+        // ── FIX: Revoke Refresh Token trong DB để vô hiệu hóa phiên đăng nhập.
+        // Ngay cả khi hacker có access token, họ không thể làm mới sau khi token hết hạn.
+        if (refreshToken == null || refreshToken.isBlank()) return;
+        try {
+            String jti = jwtService.extractJti(refreshToken);
+            if (jti == null || jti.isBlank()) return;
+            refreshTokenSessionRepository.findByJti(jti).ifPresent(session -> {
+                if (session.getRevokedAt() == null) {
+                    session.setRevokedAt(Instant.now());
+                    refreshTokenSessionRepository.save(session);
+                }
+            });
+        } catch (Exception ignored) {
+            // Token không hợp lệ hoặc đã hết hạn – bỏ qua, vẫn logout thành công phía client
+        }
+    }
 }

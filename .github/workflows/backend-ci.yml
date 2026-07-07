@@ -5,12 +5,12 @@ on:
     branches:
       - dev
     paths:
-      - 'AIGym/**'
+      - 'Backend_AIGym/AIGym/**'
   pull_request:
     branches:
       - dev
     paths:
-      - 'AIGym/**'
+      - 'Backend_AIGym/AIGym/**'
 
 jobs:
   build-and-test:
@@ -18,7 +18,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: ./AIGym
+        working-directory: ./Backend_AIGym/AIGym
 
     steps:
       - name: Checkout Code

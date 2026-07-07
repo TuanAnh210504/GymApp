@@ -24,4 +24,6 @@ public interface WorkoutPlanService {
     List<WorkoutPlanResponse> getDeletedWorkoutPlans();
 
     void restoreWorkoutPlan(Long id);
+
+    WorkoutPlanResponse togglePublic(Long id, boolean isPublic);
 }

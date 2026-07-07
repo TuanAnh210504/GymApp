@@ -12,6 +12,8 @@ import com.aigym.repository.ProgressPhotoRepository;
 import com.aigym.security.CurrentUserService;
 import com.aigym.service.ProgressPhotoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +43,14 @@ public class ProgressPhotoServiceImpl implements ProgressPhotoService {
     public ProgressPhotoResponse getProgressPhotoById(Long id) {
         ProgressPhoto photo = getPhotoAndVerifyOwnership(id);
         return toResponse(photo);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProgressPhotoResponse> getMyProgressPhotos(Pageable pageable) {
+        User currentUser = currentUserService.getCurrentUser();
+        return progressPhotoRepository.findByUserId(currentUser.getId(), pageable)
+                .map(this::toResponse);
     }
 
     @Override

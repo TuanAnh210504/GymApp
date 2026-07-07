@@ -15,6 +15,7 @@ public class WorkoutPlanResponse {
     private Long id;
     private String title;
     private String description;
+    private String coverImageUrl;
     private Integer durationWeeks;
     private Difficulty difficulty;
     @com.fasterxml.jackson.annotation.JsonProperty("isPublic")

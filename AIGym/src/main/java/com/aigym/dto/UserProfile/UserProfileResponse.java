@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class UserProfileResponse {
     private Long id;
+    private String avatarUrl;
     private Double height;
     private Double weight;
     private Double targetWeight;

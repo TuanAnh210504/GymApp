@@ -162,6 +162,36 @@ public class WeeklyMealPlanServiceImpl implements WeeklyMealPlanService {
 
     @Override
     @Transactional
+    public void unmarkMealAsEaten(Long mealId) {
+        User currentUser = currentUserService.getCurrentUser();
+        PlannedMeal meal = plannedMealRepository.findById(mealId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy bữa ăn: " + mealId));
+
+        if (!meal.getMealPlanDay().getWeeklyMealPlan().getUser().getId().equals(currentUser.getId())) {
+            throw new BadRequestException("Bạn không có quyền sửa bữa ăn này");
+        }
+
+        if (!meal.isEaten()) {
+            return;
+        }
+
+        meal.setEaten(false);
+        plannedMealRepository.save(meal);
+
+        if (meal.getFoodItem() != null) {
+            List<NutritionLog> logs = nutritionLogRepository.findByUserIdAndLoggedAtOrderByMealTypeAsc(currentUser.getId(), LocalDate.now());
+            for (NutritionLog log : logs) {
+                if (log.getFoodItem().getId().equals(meal.getFoodItem().getId()) 
+                    && log.getMealType().equals(meal.getMealType())) {
+                    nutritionLogRepository.delete(log);
+                    break;
+                }
+            }
+        }
+    }
+
+    @Override
+    @Transactional
     public com.aigym.dto.MealPlan.PlannedMealResponse updateMealAmount(Long mealId, Double newAmount) {
         User currentUser = currentUserService.getCurrentUser();
         PlannedMeal meal = plannedMealRepository.findById(mealId)

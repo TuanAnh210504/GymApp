@@ -21,6 +21,8 @@ public class WorkoutPlanRequest {
     @NotBlank(message = "Mô tả giáo án không được để trống")
     private String description;
 
+    private String coverImageUrl;
+
     @NotNull(message = "Thời lượng không được để trống")
     @Min(value = 1, message = "Thời lượng tối thiểu là 1 tuần")
     private Integer durationWeeks;

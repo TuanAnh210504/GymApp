@@ -6,11 +6,13 @@ import com.aigym.dto.ProgressPhoto.ProgressPhotoResponse;
 import com.aigym.service.ProgressPhotoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/progress-photos")
@@ -34,9 +36,17 @@ public class ProgressPhotoController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
+    /**
+     * ── FIX: Thêm Pageable để tránh OOM khi ảnh tiến độ tích lũy nhiều.
+     * Mặc định: page=0, size=20, sort theo capturedAt DESC (mới nhất trước).
+     * Ví dụ: GET /api/progress-photos?page=0&size=20
+     */
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ProgressPhotoResponse>>> getMyProgressPhotos() {
-        List<ProgressPhotoResponse> responses = progressPhotoService.getMyProgressPhotos();
+    public ResponseEntity<ApiResponse<Page<ProgressPhotoResponse>>> getMyProgressPhotos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, Math.min(size, 100), Sort.by(Sort.Direction.DESC, "capturedAt"));
+        Page<ProgressPhotoResponse> responses = progressPhotoService.getMyProgressPhotos(pageable);
         return ResponseEntity.ok(ApiResponse.success(responses));
     }
 

@@ -80,4 +80,14 @@ public class WorkoutPlanController {
         workoutPlanService.restoreWorkoutPlan(id);
         return ResponseEntity.ok(ApiResponse.success("Khôi phục giáo án thành công", null));
     }
+
+    @PatchMapping("/{id}/visibility")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<WorkoutPlanResponse>> togglePublic(
+            @PathVariable Long id,
+            @RequestParam boolean isPublic) {
+        WorkoutPlanResponse response = workoutPlanService.togglePublic(id, isPublic);
+        return ResponseEntity.ok(ApiResponse.success(
+                "Cập nhật trạng thái công khai thành công", response));
+    }
 }

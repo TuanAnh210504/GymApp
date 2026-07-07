@@ -3,6 +3,8 @@ package com.aigym.service;
 import com.aigym.domain.enums.Category;
 import com.aigym.dto.Exercise.ExerciseRequest;
 import com.aigym.dto.Exercise.ExerciseResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -19,9 +21,15 @@ public interface ExerciseService {
 
     ExerciseResponse getExerciseById(Long id);
 
+    Page<ExerciseResponse> getAllExercises(Pageable pageable);
+
     List<ExerciseResponse> getAllExercises();
 
+    Page<ExerciseResponse> getExercisesByPrimaryCategory(Category category, Pageable pageable);
+
     List<ExerciseResponse> getExercisesByPrimaryCategory(Category category);
+
+    Page<ExerciseResponse> searchExercises(String keyword, Category category, Pageable pageable);
 
     ExerciseResponse updateExercise(Long id, ExerciseRequest request);
 

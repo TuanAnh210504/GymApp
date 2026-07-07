@@ -6,12 +6,14 @@ import com.aigym.dto.FoodItem.FoodItemResponse;
 import com.aigym.service.FoodItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/food-items")
@@ -36,9 +38,20 @@ public class FoodItemController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
+    /**
+     * ── FIX: Thêm Pageable để tránh OOM khi db thực phẩm lên hàng vạn dòng.
+     * Mặc định: page=0, size=20, sort=name,asc
+     * Ví dụ: GET /api/food-items?page=0&size=20&sort=name,asc
+     */
     @GetMapping
-    public ResponseEntity<ApiResponse<List<FoodItemResponse>>> getAllFoodItems() {
-        List<FoodItemResponse> responses = foodItemService.getAllFoodItems();
+    public ResponseEntity<ApiResponse<Page<FoodItemResponse>>> getAllFoodItems(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "name") String sort,
+            @RequestParam(defaultValue = "asc") String direction) {
+        Sort.Direction sortDir = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, Math.min(size, 100), Sort.by(sortDir, sort));
+        Page<FoodItemResponse> responses = foodItemService.getAllFoodItems(pageable);
         return ResponseEntity.ok(ApiResponse.success(responses));
     }
 

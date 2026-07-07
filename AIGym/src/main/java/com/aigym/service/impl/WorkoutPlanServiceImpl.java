@@ -50,6 +50,11 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
         User currentUser = currentUserService.getCurrentUser();
         WorkoutPlan plan = genericMapper.mapToEntity(request, WorkoutPlan.class);
         plan.setCreator(currentUser);
+        
+        // Xóa danh sách auto-map của GenericMapper (bị thiếu parent reference)
+        if (plan.getPlanDays() != null) {
+            plan.getPlanDays().clear();
+        }
 
         buildPlanHierarchy(plan, request);
 
@@ -108,7 +113,7 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
         plan.setDescription(request.getDescription());
         plan.setDurationWeeks(request.getDurationWeeks());
         plan.setDifficulty(request.getDifficulty());
-        plan.setPublic(request.getIsPublic() != null && request.getIsPublic());
+        plan.setIsPublic(request.getIsPublic() != null && request.getIsPublic());
 
         workoutPlanDayRepository.deleteExercisesByPlanIdNative(id);
         workoutPlanDayRepository.deleteDaysByPlanIdNative(id);
@@ -129,7 +134,10 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy giáo án với ID: " + id));
 
         User currentUser = currentUserService.getCurrentUser();
-        if (!plan.getCreator().getId().equals(currentUser.getId())) {
+        boolean isAdmin = currentUser.getRole() == Role.ADMIN;
+        boolean isCreator = plan.getCreator() != null && plan.getCreator().getId().equals(currentUser.getId());
+
+        if (!isAdmin && !isCreator) {
             throw new BadRequestException("Bạn không có quyền xoá giáo án này");
         }
 
@@ -166,8 +174,23 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
         }
     }
 
+    @Override
+    @Transactional
+    @CacheEvict(value = "public-workout-plans", allEntries = true)
+    public WorkoutPlanResponse togglePublic(Long id, boolean isPublic) {
+        int updated = workoutPlanRepository.updateIsPublicNative(id, isPublic);
+        if (updated == 0) {
+            throw new NotFoundException("Không tìm thấy giáo án với ID: " + id);
+        }
+        WorkoutPlan plan = workoutPlanRepository.findWithDetailsById(id)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy giáo án với ID: " + id));
+        return toResponse(plan);
+    }
+
     private WorkoutPlanResponse toResponse(WorkoutPlan plan) {
         WorkoutPlanResponse response = genericMapper.mapToDto(plan, WorkoutPlanResponse.class);
+        // MapStruct/ModelMapper có thể map sót trường isPublic do khác biệt getter/setter
+        response.setIsPublic(plan.getIsPublic());
 
         List<WorkoutPlanDayResponse> dayResponses = new ArrayList<>();
         if (plan.getPlanDays() != null) {

@@ -24,5 +24,7 @@ public interface WeeklyMealPlanService {
 
     NutritionLogResponse markMealAsEaten(Long mealId, Double actualAmount);
     
+    void unmarkMealAsEaten(Long mealId);
+
     com.aigym.dto.MealPlan.PlannedMealResponse updateMealAmount(Long mealId, Double newAmount);
 }

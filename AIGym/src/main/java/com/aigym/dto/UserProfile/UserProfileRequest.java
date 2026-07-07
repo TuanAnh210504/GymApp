@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserProfileRequest {
 
+    private String avatarUrl;
+
     @NotNull(message = "Chiều cao không được để trống")
     @Min(value = 50, message = "Chiều cao không hợp lệ")
     private Double height; // cm

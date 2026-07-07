@@ -214,7 +214,13 @@ public class AiServiceImpl implements AiService {
                                         log.warn("Emitter đã đóng khi đang stream dữ liệu cho session: {}", sessionId);
                                         completed.set(true);
                                     } catch (Exception e) {
-                                        log.error("Error parsing Gemini stream data", e);
+                                        String errorName = e.getClass().getSimpleName();
+                                        if (errorName.contains("ClientAbortException") || errorName.contains("AsyncRequestNotUsableException") || e instanceof java.io.IOException) {
+                                            log.warn("Client ngắt kết nối (SSE timeout/disconnect) cho session: {}", sessionId);
+                                            completed.set(true);
+                                        } else {
+                                            log.error("Error parsing/sending Gemini stream data", e);
+                                        }
                                     }
                                 }
                             }

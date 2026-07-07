@@ -29,6 +29,9 @@ public class UserProfile extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
+    @Column
+    private String avatarUrl; // Ảnh đại diện
+
     @Column(nullable = false)
     private Double height; // Chiều cao (cm)
 

@@ -2,6 +2,8 @@ package com.aigym.repository;
 
 import com.aigym.domain.enums.Category;
 import com.aigym.domain.entity.Exercise;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +12,15 @@ import java.util.List;
 @Repository
 public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
 
+    Page<Exercise> findAll(Pageable pageable);
+
+    Page<Exercise> findByPrimaryCategory(Category category, Pageable pageable);
+
     List<Exercise> findByPrimaryCategory(Category category);
+
+    Page<Exercise> findByNameContainingIgnoreCase(String name, Pageable pageable);
+
+    Page<Exercise> findByNameContainingIgnoreCaseAndPrimaryCategory(String name, Category category, Pageable pageable);
 
     boolean existsByName(String name);
 

@@ -128,11 +128,9 @@ public class WeeklyScheduleServiceImpl implements WeeklyScheduleService {
         }
         schedule.setActive(request.isActive());
 
-        // Hard-delete old days + exercises via native SQL to avoid soft-delete unique constraint conflict
-        scheduleDayRepository.hardDeleteExercisesByScheduleId(id);
-        scheduleDayRepository.hardDeleteDaysByScheduleId(id);
-        // Evict the stale collection from session so Hibernate doesn't try to soft-delete again
+        // Clear existing days and flush to safely remove orphans before inserting new ones
         schedule.getScheduleDays().clear();
+        weeklyScheduleRepository.flush();
 
         // Build new hierarchy
         buildScheduleHierarchy(schedule, request);

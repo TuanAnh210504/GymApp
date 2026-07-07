@@ -42,6 +42,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .orElse(new UserProfile()); // Nếu chưa có thì tạo mới
 
         profile.setUser(currentUser);
+        profile.setAvatarUrl(request.getAvatarUrl());
         profile.setHeight(request.getHeight());
         profile.setWeight(request.getWeight());
         profile.setTargetWeight(request.getTargetWeight());

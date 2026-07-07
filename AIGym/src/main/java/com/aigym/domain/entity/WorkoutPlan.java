@@ -12,7 +12,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
@@ -35,6 +36,9 @@ public class WorkoutPlan extends BaseEntity {
     @Column(nullable = false)
     private String description;
 
+    @Column
+    private String coverImageUrl; // Ảnh bìa giáo án
+
     @Column(nullable = false)
     private Integer durationWeeks;
 
@@ -45,7 +49,7 @@ public class WorkoutPlan extends BaseEntity {
     @Column(nullable = false)
     @Builder.Default
     @com.fasterxml.jackson.annotation.JsonProperty("isPublic")
-    private boolean isPublic = false;
+    private Boolean isPublic = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_user_id")
@@ -53,5 +57,5 @@ public class WorkoutPlan extends BaseEntity {
 
     @OneToMany(mappedBy = "workoutPlan", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<WorkoutPlanDay> planDays = new ArrayList<>();
+    private Set<WorkoutPlanDay> planDays = new LinkedHashSet<>();
 }

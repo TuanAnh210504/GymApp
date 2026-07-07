@@ -44,4 +44,9 @@ public interface WorkoutPlanRepository extends JpaRepository<WorkoutPlan, Long> 
     @org.springframework.data.jpa.repository.Modifying
     @org.springframework.data.jpa.repository.Query(value = "UPDATE workout_plans SET is_deleted = false WHERE id = :id", nativeQuery = true)
     int restoreNative(@org.springframework.data.repository.query.Param("id") Long id);
+
+    @org.springframework.data.jpa.repository.Modifying(clearAutomatically = true)
+    @org.springframework.data.jpa.repository.Query(value = "UPDATE workout_plans SET is_public = :isPublic WHERE id = :id AND is_deleted = false", nativeQuery = true)
+    int updateIsPublicNative(@org.springframework.data.repository.query.Param("id") Long id,
+                             @org.springframework.data.repository.query.Param("isPublic") boolean isPublic);
 }

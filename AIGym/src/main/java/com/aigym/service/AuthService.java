@@ -15,4 +15,6 @@ public interface AuthService {
     AuthResponseDto refresh(RefreshTokenRequestDto request);
     void forgotPassword(ForgotPasswordRequestDto request);
     void resetPassword(ResetPasswordRequestDto request);
+    /** Thu hồi refresh token khi đăng xuất – ngăn tái sử dụng token bị đánh cắp. */
+    void logout(String refreshToken);
 }
