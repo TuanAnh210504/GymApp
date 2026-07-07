@@ -34,12 +34,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        ApiResponse<Void> response = ApiResponse.error("Validation failed", errors);
+        String mainMessage = "Dữ liệu không hợp lệ";
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            errors.put(error.getField(), error.getDefaultMessage());
+            if (mainMessage.equals("Dữ liệu không hợp lệ")) {
+                mainMessage = error.getDefaultMessage();
+            }
+        }
+        ApiResponse<Void> response = ApiResponse.error(mainMessage, errors);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
@@ -65,7 +67,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public ResponseEntity<ApiResponse<Void>> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex) {
+    public ResponseEntity<ApiResponse<Void>> handleHttpMediaTypeNotSupportedException(
+            HttpMediaTypeNotSupportedException ex) {
         ApiResponse<Void> response = ApiResponse.error("Định dạng dữ liệu không được hỗ trợ.");
         return new ResponseEntity<>(response, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
