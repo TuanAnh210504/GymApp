@@ -14,6 +14,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.hibernate.annotations.SQLDelete;
@@ -56,6 +57,11 @@ public class Exercise extends BaseEntity {
     private String equipment; // Dụng cụ (null = bằng thể trọng)
 
     private String imageUrl; // Ảnh minh hoạ
+
+    @ElementCollection
+    @CollectionTable(name = "exercise_instruction_images", joinColumns = @JoinColumn(name = "exercise_id"))
+    @Column(name = "image_url", length = 1000)
+    private List<String> instructionImageUrls; // Danh sách ảnh chi tiết hướng dẫn
 
     private String videoUrl; // Link video hướng dẫn
 

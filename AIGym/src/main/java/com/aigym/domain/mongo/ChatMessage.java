@@ -18,13 +18,13 @@ public class ChatMessage {
     @Id
     private String id;
     
-    private String sessionId; // Liên kết tới ChatSession
+    private String sessionId;
     
-    private Long userId; // Cho mục đích truy vấn/phân quyền nhanh
+    private Long userId;
     
-    private String sender; // "USER" hoặc "AI"
+    private String sender;
     
-    private String content; // Nội dung tin nhắn
+    private String content;
     
     private LocalDateTime timestamp;
 }

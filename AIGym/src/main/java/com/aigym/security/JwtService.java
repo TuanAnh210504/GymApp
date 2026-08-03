@@ -40,7 +40,7 @@ public class JwtService {
     public String generateAccessToken(User user, Instant now, Instant expiresAt) {
         return Jwts.builder()
                 .issuer(properties.issuer())
-                .subject(user.getEmail()) // Dùng email làm subject
+                .subject(user.getEmail())
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(expiresAt))
                 .claim(TOKEN_TYPE_CLAIM, ACCESS_TOKEN_TYPE)

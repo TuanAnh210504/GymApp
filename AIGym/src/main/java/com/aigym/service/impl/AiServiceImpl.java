@@ -33,19 +33,17 @@ public class AiServiceImpl implements AiService {
     private final ChatHistoryService chatHistoryService;
     private final ObjectMapper objectMapper;
 
-    @Value("${gemini.api.key}")
-    private String geminiApiKey;
+    @Value("${groq.api.key}")
+    private String groqApiKey;
 
     private final HttpClient httpClient = HttpClient.newBuilder().build();
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
-    // Danh sách các model dự phòng (từ nhanh nhất đến các bản cũ hơn)
-    private static final String[] GEMINI_MODELS = {
-        "gemini-2.5-flash",
-        "gemini-2.5-pro",
-        "gemini-1.5-flash",
-        "gemini-1.5-pro",
-        "gemini-1.5-flash-8b"
+    // Danh sách các model dự phòng của Groq Cloud (Cập nhật mới nhất)
+    private static final String[] GROQ_MODELS = {
+            "llama-3.3-70b-versatile",  // Model mạnh, context window 128k, phù hợp tạo lịch dài
+            "openai/gpt-oss-20b",       // Dự phòng tốc độ cao
+            "llama-3.1-8b-instant"      // Dự phòng cuối
     };
 
     @Override
@@ -69,11 +67,13 @@ public class AiServiceImpl implements AiService {
             completed.set(true);
         });
 
-        // Lấy thông tin user và Context ở luồng chính (tránh mất SecurityContext trong luồng async)
+        // Lấy thông tin user và Context ở luồng chính (tránh mất SecurityContext trong
+        // luồng async)
         User currentUser = currentUserService.getCurrentUser();
         Long userId = currentUser.getId();
 
-        // Gọi contextGathererService TRƯỚC KHI vào executor.execute() để giữ SecurityContext
+        // Gọi contextGathererService TRƯỚC KHI vào executor.execute() để giữ
+        // SecurityContext
         String systemContextStr;
         try {
             systemContextStr = contextGathererService.gatherUserContext();
@@ -89,14 +89,14 @@ public class AiServiceImpl implements AiService {
                 // Lưu câu hỏi của User vào DB
                 chatHistoryService.saveMessage(sessionId, userId, "USER", userMessage);
 
-                // Lấy lịch sử chat của Session này
-                List<ChatMessage> chatHistory = chatHistoryService.getContextMessages(sessionId, 20);
+                // Lấy lịch sử chat (giới hạn 10 tin để không vượt token limit)
+                List<ChatMessage> chatHistory = chatHistoryService.getContextMessages(sessionId, 10);
 
-                // Build Request gửi cho Gemini
-                String requestBody = buildGeminiRequest(systemContext, chatHistory, userMessage);
+                // Build Request gửi cho Groq
+                var messagesArray = buildGroqMessagesNode(systemContext, chatHistory, userMessage);
 
                 // Khởi chạy vòng lặp thử các model (bắt đầu từ model đầu tiên)
-                tryModel(0, requestBody, emitter, completed, sessionId, userId);
+                tryModel(0, messagesArray, emitter, completed, sessionId, userId);
 
             } catch (Exception e) {
                 log.error("Error initiating stream", e);
@@ -109,9 +109,9 @@ public class AiServiceImpl implements AiService {
         return emitter;
     }
 
-    private void tryModel(int modelIndex, String requestBody, SseEmitter emitter, AtomicBoolean completed,
+    private void tryModel(int modelIndex, com.fasterxml.jackson.databind.node.ArrayNode messagesArray, SseEmitter emitter, AtomicBoolean completed,
             String sessionId, Long userId) {
-        if (modelIndex >= GEMINI_MODELS.length) {
+        if (modelIndex >= GROQ_MODELS.length) {
             // Đã thử hết tất cả các model nhưng đều thất bại
             if (!completed.getAndSet(true)) {
                 try {
@@ -127,21 +127,37 @@ public class AiServiceImpl implements AiService {
             return;
         }
 
-        // Kiểm tra nếu emitter đã bị đóng (do timeout từ phía client) thì không tiếp tục
+        // Kiểm tra nếu emitter đã bị đóng (do timeout từ phía client) thì không tiếp
+        // tục
         if (completed.get()) {
             log.warn("Emitter đã đóng, hủy kết nối AI cho session: {}", sessionId);
             return;
         }
 
-        String modelName = GEMINI_MODELS[modelIndex];
+        String modelName = GROQ_MODELS[modelIndex];
         log.info("Đang thử kết nối AI với model: {}", modelName);
 
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/" + modelName
-                + ":streamGenerateContent?alt=sse&key=" + geminiApiKey;
+        var requestRoot = objectMapper.createObjectNode();
+        requestRoot.put("model", modelName);
+        requestRoot.set("messages", messagesArray);
+        requestRoot.put("stream", true);
+        requestRoot.put("max_tokens", 4096);  // Đã giảm xuống 4096 để không vượt qua giới hạn 12000 TPM của bản Free
+        requestRoot.put("temperature", 0.7);
+
+        String requestBody;
+        try {
+            requestBody = objectMapper.writeValueAsString(requestRoot);
+        } catch(Exception e) {
+            log.error("Failed to build request body", e);
+            return;
+        }
+
+        String url = "https://api.groq.com/openai/v1/chat/completions";
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + groqApiKey.trim())
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
@@ -157,11 +173,9 @@ public class AiServiceImpl implements AiService {
                         }
                         log.warn("Model {} bị lỗi: Status {}, Body: {}", modelName, response.statusCode(), errorBody);
 
-                        // Nếu bị lỗi 503 (High Demand), 429 (Rate limit), 404 (Not Found) hoặc 5xx,
-                        // chuyển sang model dự phòng
                         if (response.statusCode() == 503 || response.statusCode() == 429
                                 || response.statusCode() == 404 || response.statusCode() >= 500) {
-                            tryModel(modelIndex + 1, requestBody, emitter, completed, sessionId, userId);
+                            tryModel(modelIndex + 1, messagesArray, emitter, completed, sessionId, userId);
                         } else {
                             // Lỗi cú pháp hoặc lỗi xác thực (400, 401, 403), không thử lại
                             if (!completed.getAndSet(true)) {
@@ -192,11 +206,11 @@ public class AiServiceImpl implements AiService {
                                 if (!jsonData.trim().isEmpty() && !jsonData.equals("[DONE]")) {
                                     try {
                                         JsonNode rootNode = objectMapper.readTree(jsonData);
-                                        JsonNode candidates = rootNode.path("candidates");
-                                        if (candidates.isArray() && candidates.size() > 0) {
-                                            JsonNode parts = candidates.get(0).path("content").path("parts");
-                                            if (parts.isArray() && parts.size() > 0) {
-                                                String text = parts.get(0).path("text").asText();
+                                        JsonNode choices = rootNode.path("choices");
+                                        if (choices.isArray() && choices.size() > 0) {
+                                            JsonNode delta = choices.get(0).path("delta");
+                                            if (delta.has("content")) {
+                                                String text = delta.path("content").asText();
                                                 if (text != null && !text.isEmpty()) {
                                                     fullAiResponse.append(text);
                                                     // Chỉ gửi nếu emitter chưa đóng
@@ -215,18 +229,21 @@ public class AiServiceImpl implements AiService {
                                         completed.set(true);
                                     } catch (Exception e) {
                                         String errorName = e.getClass().getSimpleName();
-                                        if (errorName.contains("ClientAbortException") || errorName.contains("AsyncRequestNotUsableException") || e instanceof java.io.IOException) {
-                                            log.warn("Client ngắt kết nối (SSE timeout/disconnect) cho session: {}", sessionId);
+                                        if (errorName.contains("ClientAbortException")
+                                                || errorName.contains("AsyncRequestNotUsableException")
+                                                || e instanceof java.io.IOException) {
+                                            log.warn("Client ngắt kết nối (SSE timeout/disconnect) cho session: {}",
+                                                    sessionId);
                                             completed.set(true);
                                         } else {
-                                            log.error("Error parsing/sending Gemini stream data", e);
+                                            log.error("Error parsing/sending Groq stream data", e);
                                         }
                                     }
                                 }
                             }
                         });
                     } catch (Exception e) {
-                        log.error("Error reading Gemini response stream for model {}", modelName, e);
+                        log.error("Error reading Groq response stream for model {}", modelName, e);
                     }
 
                     // Chỉ lưu lịch sử vào DB nếu phản hồi thành công và có dữ liệu
@@ -241,25 +258,20 @@ public class AiServiceImpl implements AiService {
                 })
                 .exceptionally(ex -> {
                     log.warn("Lỗi mạng khi kết nối model {}", modelName, ex);
-                    tryModel(modelIndex + 1, requestBody, emitter, completed, sessionId, userId);
+                    tryModel(modelIndex + 1, messagesArray, emitter, completed, sessionId, userId);
                     return null;
                 });
     }
 
-    private String buildGeminiRequest(String systemContext, List<ChatMessage> chatHistory, String currentUserMessage)
-            throws Exception {
-        var root = objectMapper.createObjectNode();
+    private com.fasterxml.jackson.databind.node.ArrayNode buildGroqMessagesNode(String systemContext, List<ChatMessage> chatHistory, String currentUserMessage) {
+        var messages = objectMapper.createArrayNode();
 
         // System Instruction
-        var systemInstruction = root.putObject("system_instruction");
-        systemInstruction.putObject("parts").put("text", systemContext);
-
-        // Contents (History + Current Message)
-        var contents = root.putArray("contents");
+        var sysMsg = messages.addObject();
+        sysMsg.put("role", "system");
+        sysMsg.put("content", systemContext);
 
         // 1. Thêm lịch sử chat vào ngữ cảnh
-        // Dùng vòng lặp có index để kiểm tra phần tử CUỐI CÙNG chính xác
-        // (indexOf luôn trả vị trí đầu tiên, sẽ sai khi User gõ lại câu đã gõ trước đó)
         for (int i = 0; i < chatHistory.size(); i++) {
             ChatMessage msg = chatHistory.get(i);
             // Bỏ qua tin nhắn hiện tại nếu nó nằm ở ĐÚNG vị trí cuối của lịch sử
@@ -269,18 +281,16 @@ public class AiServiceImpl implements AiService {
                 continue; // Sẽ thêm ở bước 2
             }
 
-            var historyContent = contents.addObject();
-            historyContent.put("role", msg.getSender().equals("AI") ? "model" : "user");
-            var parts = historyContent.putArray("parts");
-            parts.addObject().put("text", msg.getContent());
+            var historyContent = messages.addObject();
+            historyContent.put("role", msg.getSender().equals("AI") ? "assistant" : "user");
+            historyContent.put("content", msg.getContent());
         }
 
         // 2. Thêm tin nhắn hiện tại
-        var userContent = contents.addObject();
+        var userContent = messages.addObject();
         userContent.put("role", "user");
-        var parts = userContent.putArray("parts");
-        parts.addObject().put("text", currentUserMessage);
+        userContent.put("content", currentUserMessage);
 
-        return objectMapper.writeValueAsString(root);
+        return messages;
     }
 }

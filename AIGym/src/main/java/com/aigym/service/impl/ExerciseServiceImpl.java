@@ -78,6 +78,12 @@ public class ExerciseServiceImpl implements ExerciseService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<String> getAllExerciseNames() {
+        return exerciseRepository.findAllExerciseNames();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<ExerciseResponse> getExercisesByPrimaryCategory(Category category, Pageable pageable) {
         return exerciseRepository.findByPrimaryCategory(category, pageable).map(this::toResponse);
     }
@@ -132,6 +138,7 @@ public class ExerciseServiceImpl implements ExerciseService {
         exercise.setDifficulty(request.getDifficulty());
         exercise.setEquipment(request.getEquipment());
         exercise.setImageUrl(request.getImageUrl());
+        exercise.setInstructionImageUrls(request.getInstructionImageUrls());
         exercise.setVideoUrl(request.getVideoUrl());
         exercise.setPublic(request.getIsPublic());
 

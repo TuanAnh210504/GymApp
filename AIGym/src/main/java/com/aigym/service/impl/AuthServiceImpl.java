@@ -134,7 +134,11 @@ public class AuthServiceImpl implements AuthService {
 
         // 2. Kiểm tra trạng thái kích hoạt TRƯỚC khi verify password
         if (!user.isActive()) {
-            throw new BadCredentialsException("Vui lòng xác thực email trước khi đăng nhập");
+            if (user.getVerificationCode() == null) {
+                throw new BadCredentialsException("Tài khoản của bạn đã bị khóa bởi quản trị viên");
+            } else {
+                throw new BadCredentialsException("Vui lòng xác thực email trước khi đăng nhập");
+            }
         }
 
         // 3. Xác thực mật khẩu qua Spring Security
@@ -175,6 +179,10 @@ public class AuthServiceImpl implements AuthService {
 
         if (!currentSession.getUser().getId().equals(user.getId())) {
             throw new BadCredentialsException("Invalid refresh token");
+        }
+        
+        if (!user.isActive()) {
+            throw new BadCredentialsException("Tài khoản của bạn đã bị khóa bởi quản trị viên.");
         }
 
         Instant now = Instant.now();
@@ -307,5 +315,26 @@ public class AuthServiceImpl implements AuthService {
         } catch (Exception ignored) {
             // Token không hợp lệ hoặc đã hết hạn – bỏ qua, vẫn logout thành công phía client
         }
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(com.aigym.dto.authdto.ChangePasswordRequestDto request) {
+        org.springframework.security.core.Authentication authentication =
+                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new com.aigym.common.exception.NotFoundException("Không tìm thấy người dùng"));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new com.aigym.common.exception.BadRequestException("Mật khẩu hiện tại không chính xác");
+        }
+
+        if (request.getCurrentPassword().equals(request.getNewPassword())) {
+            throw new com.aigym.common.exception.BadRequestException("Mật khẩu mới không được trùng với mật khẩu cũ");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 }

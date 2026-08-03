@@ -42,7 +42,6 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
-                // RateLimitFilter (Bucket4j) chạy trước JwtAuthFilter: chặn abuse sớm nhất có thể
                 .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -52,18 +51,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        // ── FIX: Chỉ cho phép các origin cụ thể thay vì wildcard "*"
-        // Wildcard "*" kết hợp allowCredentials=true là lỗ hổng bảo mật CSRF nghiêm
-        // trọng.
-        // Đọc danh sách origin từ biến môi trường CORS_ALLOWED_ORIGINS (phân tách bởi
-        // dấu phẩy).
-        // Ví dụ: CORS_ALLOWED_ORIGINS=http://localhost:3000,https://aigym.example.com
+    
         String allowedOriginsEnv = System.getenv("CORS_ALLOWED_ORIGINS");
         List<String> allowedOrigins;
         if (allowedOriginsEnv != null && !allowedOriginsEnv.isBlank()) {
             allowedOrigins = List.of(allowedOriginsEnv.split(","));
         } else {
-            // Fallback chỉ dùng cho dev local
             allowedOrigins = List.of("http://localhost:3000", "http://localhost:8081", "http://10.0.2.2:8080");
         }
         config.setAllowedOrigins(allowedOrigins);

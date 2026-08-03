@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -37,6 +38,8 @@ public class ExerciseRequest {
     private String equipment;
 
     private String imageUrl;
+
+    private List<String> instructionImageUrls;
 
     private String videoUrl;
 

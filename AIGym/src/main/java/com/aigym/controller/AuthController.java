@@ -80,6 +80,15 @@ public class AuthController {
     }
 
     /**
+     * ── Đổi mật khẩu cho user đang đăng nhập.
+     */
+    @PostMapping("/change-password")
+    public ResponseEntity<ApiResponse<Void>> changePassword(@Valid @RequestBody com.aigym.dto.authdto.ChangePasswordRequestDto request) {
+        authService.changePassword(request);
+        return ResponseEntity.ok(ApiResponse.success("Đổi mật khẩu thành công.", null));
+    }
+
+    /**
      * ── FIX: Endpoint Logout – Thu hồi Refresh Token phía Backend.
      * Khi đăng xuất, client gửi refreshToken để server đánh dấu revoked trong DB.
      * Điều này đảm bảo token bị đánh cắp không thể dùng để lấy access token mới.

@@ -22,11 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * ── FIX: Đã refactor từ ~250 dòng StringBuilder thành template-based approach.
- * System prompt được lưu trong resources/ai_system_prompt.txt để dễ bảo trì.
- * Data động được inject qua placeholder {{SECTION_NAME}}.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -130,15 +125,15 @@ public class ContextGathererServiceImpl implements ContextGathererService {
 
     private String buildExerciseListSection() {
         try {
-            // Dùng getAllExercises() không phân trang để lấy tên bài tập cho AI context
-            List<ExerciseResponse> exercises = exerciseService.getAllExercises();
+            // Dùng getAllExerciseNames() để lấy tên bài tập cho AI context, tối ưu N+1 query
+            // Giới hạn 50 bài tập để tránh vượt token limit của AI
+            List<String> exercises = exerciseService.getAllExerciseNames();
             if (exercises == null || exercises.isEmpty()) return "";
 
-            String names = exercises.stream()
-                    .map(ExerciseResponse::getName)
-                    .collect(Collectors.joining(", "));
-            return "\n--- DANH SÁCH BÀI TẬP CÓ SẴN TRONG HỆ THỐNG (chỉ để tham khảo) ---\n"
-                    + "Danh sách: " + names + "\n";
+            List<String> limited = exercises.size() > 50 ? exercises.subList(0, 50) : exercises;
+            String names = String.join(", ", limited);
+            return "\n--- DANH SÁCH BÀI TẬP CÓ SẴN (tham khảo, ưu tiên dùng tên này) ---\n"
+                    + names + "\n";
         } catch (Exception e) {
             log.debug("Could not load exercise list for AI context: {}", e.getMessage());
             return "";

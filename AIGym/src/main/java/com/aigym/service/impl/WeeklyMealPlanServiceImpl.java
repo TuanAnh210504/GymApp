@@ -78,7 +78,7 @@ public class WeeklyMealPlanServiceImpl implements WeeklyMealPlanService {
     @Transactional(readOnly = true)
     public WeeklyMealPlanResponse getMyActiveMealPlan() {
         User currentUser = currentUserService.getCurrentUser();
-        WeeklyMealPlan plan = weeklyMealPlanRepository.findByUserIdAndIsActiveTrue(currentUser.getId())
+        WeeklyMealPlan plan = weeklyMealPlanRepository.findWithDetailsByUserIdAndIsActiveTrue(currentUser.getId())
                 .orElseThrow(() -> new NotFoundException("Bạn chưa có thực đơn nào đang được kích hoạt"));
         return toResponse(plan);
     }

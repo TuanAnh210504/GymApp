@@ -110,7 +110,7 @@ public class WeeklyScheduleServiceImpl implements WeeklyScheduleService {
     @Transactional(readOnly = true)
     public WeeklyScheduleResponse getMyActiveSchedule() {
         User currentUser = currentUserService.getCurrentUser();
-        WeeklySchedule schedule = weeklyScheduleRepository.findByUserIdAndIsActiveTrue(currentUser.getId())
+        WeeklySchedule schedule = weeklyScheduleRepository.findWithDetailsByUserIdAndIsActiveTrue(currentUser.getId())
                 .orElseThrow(() -> new NotFoundException("Bạn chưa có lịch tập nào đang được kích hoạt"));
         return toResponse(schedule);
     }

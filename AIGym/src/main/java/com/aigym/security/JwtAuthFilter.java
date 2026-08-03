@@ -1,6 +1,7 @@
 package com.aigym.security;
 
 import io.jsonwebtoken.JwtException;
+import jakarta.persistence.EntityManager;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,9 +24,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private static final String BEARER_PREFIX = "Bearer ";
 
     private final JwtService jwtService;
+    private final com.aigym.repository.UserRepository userRepository;
+    private final EntityManager entityManager;
 
-    public JwtAuthFilter(JwtService jwtService) {
+    public JwtAuthFilter(JwtService jwtService, com.aigym.repository.UserRepository userRepository, EntityManager entityManager) {
         this.jwtService = jwtService;
+        this.userRepository = userRepository;
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -52,8 +57,24 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
 
-            // 3. Lấy dữ liệu Username và Role TRỰC TIẾP từ token (Không query DB)
+            // 3. Lấy dữ liệu Username và Role TRỰC TIẾP từ token
             String username = jwtService.extractUsername(token);
+            
+            if (username != null) {
+                // Kiểm tra trực tiếp từ DB bằng native query để tránh Hibernate L1 cache trả về dữ liệu cũ
+                Boolean isActiveInDb = (Boolean) entityManager
+                        .createNativeQuery("SELECT is_active FROM users WHERE email = ? AND is_deleted = false")
+                        .setParameter(1, username)
+                        .getResultList()
+                        .stream()
+                        .findFirst()
+                        .orElse(null);
+                if (isActiveInDb == null || !isActiveInDb) {
+                    writeUnauthorizedResponse(response, "Tài khoản của bạn đã bị khóa bởi quản trị viên.");
+                    return;
+                }
+            }
+
             List<SimpleGrantedAuthority> authorities = jwtService.extractRoles(token).stream()
                     .map(role -> new SimpleGrantedAuthority("ROLE_" + role)) // Thêm tiền tố ROLE_ theo chuẩn Spring Security
                     .toList();

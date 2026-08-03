@@ -27,7 +27,6 @@ public class AppSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-
     // 2. Cấu hình Provider cho Spring Security
     @Bean
     public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
@@ -50,6 +49,7 @@ public class AppSecurityConfig {
     public CommandLineRunner initDatabase(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
             String initData = System.getenv("APP_INIT_DATA");
+
             if (!"true".equalsIgnoreCase(initData)) {
                 log.info("Skipping default data initialization. Set APP_INIT_DATA=true to enable.");
                 return;

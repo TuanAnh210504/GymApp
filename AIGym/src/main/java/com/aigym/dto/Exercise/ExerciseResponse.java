@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -38,6 +39,8 @@ public class ExerciseResponse {
     private String equipment;
 
     private String imageUrl;
+
+    private List<String> instructionImageUrls;
 
     private String videoUrl;
 

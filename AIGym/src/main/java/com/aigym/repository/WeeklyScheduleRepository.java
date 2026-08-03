@@ -29,4 +29,11 @@ public interface WeeklyScheduleRepository extends JpaRepository<WeeklySchedule, 
     // --- Dùng cho các tác vụ nhẹ (deactivate, check active) ---
     List<WeeklySchedule> findByUserId(Long userId);
     Optional<WeeklySchedule> findByUserIdAndIsActiveTrue(Long userId);
+
+    @EntityGraph(attributePaths = {
+            "scheduleDays",
+            "scheduleDays.scheduledExercises",
+            "scheduleDays.scheduledExercises.exercise"
+    })
+    Optional<WeeklySchedule> findWithDetailsByUserIdAndIsActiveTrue(Long userId);
 }

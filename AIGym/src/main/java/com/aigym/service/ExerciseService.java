@@ -25,6 +25,8 @@ public interface ExerciseService {
 
     List<ExerciseResponse> getAllExercises();
 
+    List<String> getAllExerciseNames();
+
     Page<ExerciseResponse> getExercisesByPrimaryCategory(Category category, Pageable pageable);
 
     List<ExerciseResponse> getExercisesByPrimaryCategory(Category category);

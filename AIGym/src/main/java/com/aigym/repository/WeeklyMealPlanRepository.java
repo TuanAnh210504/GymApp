@@ -29,4 +29,11 @@ public interface WeeklyMealPlanRepository extends JpaRepository<WeeklyMealPlan, 
     // --- Dùng cho các tác vụ nhẹ (deactivate, check active) ---
     List<WeeklyMealPlan> findByUserId(Long userId);
     Optional<WeeklyMealPlan> findByUserIdAndIsActiveTrue(Long userId);
+
+    @EntityGraph(attributePaths = {
+            "mealPlanDays",
+            "mealPlanDays.plannedMeals",
+            "mealPlanDays.plannedMeals.foodItem"
+    })
+    Optional<WeeklyMealPlan> findWithDetailsByUserIdAndIsActiveTrue(Long userId);
 }

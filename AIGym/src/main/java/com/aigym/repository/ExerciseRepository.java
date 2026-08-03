@@ -22,6 +22,9 @@ public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
 
     Page<Exercise> findByNameContainingIgnoreCaseAndPrimaryCategory(String name, Category category, Pageable pageable);
 
+    @org.springframework.data.jpa.repository.Query("SELECT e.name FROM Exercise e WHERE e.isDeleted = false")
+    List<String> findAllExerciseNames();
+
     boolean existsByName(String name);
 
     java.util.Optional<Exercise> findByNameIgnoreCase(String name);
