@@ -51,7 +51,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-    
+
         String allowedOriginsEnv = System.getenv("CORS_ALLOWED_ORIGINS");
         List<String> allowedOrigins;
         if (allowedOriginsEnv != null && !allowedOriginsEnv.isBlank()) {
