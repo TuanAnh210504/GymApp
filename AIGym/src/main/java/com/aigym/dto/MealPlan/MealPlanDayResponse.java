@@ -1,0 +1,19 @@
+package com.aigym.dto.MealPlan;
+
+import com.aigym.domain.enums.DayOfWeek;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class MealPlanDayResponse {
+    private Long id;
+    private DayOfWeek dayOfWeek;
+    private String label;
+    private boolean restDay;
+    private List<PlannedMealResponse> plannedMeals;
+}

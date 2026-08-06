@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: AIGym
+
+  profiles:
+    active: dev
+
+  mvc:
+    async:
+      request-timeout: 300000
+  
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  mongodb:
+    uri: mongodb://localhost:27017/aigym
+
+server:
+  port: 8080
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    operations-sorter: alpha
+    tags-sorter: alpha
+
+jwt:
+  issuer: aigym-auth-server
+  accessExpiration: 86400000      # 1 day in ms
+  refreshExpiration: 604800000    # 7 days in ms
+
