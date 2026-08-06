@@ -54,7 +54,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         // Auto-calculate Daily Calorie Goal (Overrides frontend value)
         Integer calculatedCalorieGoal = healthCalculatorService.calculateDailyCalorieGoal(profile);
         profile.setDailyCalorieGoal(calculatedCalorieGoal);
-        
+
         // Auto-calculate Macros
         profile.setDailyProteinGoal(healthCalculatorService.calculateProteinGoal(calculatedCalorieGoal));
         profile.setDailyCarbsGoal(healthCalculatorService.calculateCarbsGoal(calculatedCalorieGoal));

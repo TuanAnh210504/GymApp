@@ -58,7 +58,6 @@ logs/
 
 ### Application Secrets ###
 # Chặn các file config chứa mật khẩu thật
-application-dev.yml
 application-prod.yml
 application-prod.properties
 application-local.yml
@@ -66,3 +65,4 @@ application-local.properties
 application-secret.yml
 application-secret.properties
 secrets.yml
+

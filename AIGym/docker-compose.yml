@@ -5,12 +5,14 @@ services:
     container_name: aigym-backend
     ports:
       - "8080:8080"
+    env_file:
+      - ../.env
     environment:
-      # Ghi đè cấu hình kết nối DB bằng biến môi trường (Environment variables)
+      # Ghi đè cấu hình kết nối DB (URL không nằm trong .env)
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/aigym?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=123456
       - SPRING_MONGODB_URI=mongodb://mongodb:27017/aigym
+      # Map GEMINI_API_KEY to GROQ_API_KEY since .env has GEMINI_API_KEY but app expects GROQ_API_KEY
+      - GROQ_API_KEY=${GEMINI_API_KEY}
     depends_on:
       mysql:
         condition: service_healthy
@@ -25,8 +27,10 @@ services:
     container_name: aigym-mysql
     ports:
       - "3307:3306"
+    env_file:
+      - ../.env
     environment:
-      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
       - MYSQL_DATABASE=aigym
     volumes:
       - mysql_data:/var/lib/mysql

@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/aigym?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+  mail:
+    username: ${MAIL_USERNAME:nta2105.dev@gmail.com}
+    password: ${MAIL_PASSWORD:}
+
+jwt:
+  secret: ${JWT_SECRET:aigym-super-secret-key-replace-this-with-random-256bit-string}
+  
+groq:
+  api:
+    key: ${GROQ_API_KEY:}
